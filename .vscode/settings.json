@@ -1,0 +1,10 @@
+{
+    "editor.formatOnSave": true,
+    "go.formatTool": "gofmt",
+    "[yaml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[yml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    }
+}

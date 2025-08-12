@@ -1,0 +1,992 @@
+[
+    {
+        "name": "googleads.g.doubleclick.net"
+    },
+    {
+        "name": "pagead2.googlesyndication.com"
+    },
+    {
+        "name": "doubleclick.net"
+    },
+    {
+        "name": "securepubads.g.doubleclick.net"
+    },
+    {
+        "name": "googletagservices.com"
+    },
+    {
+        "name": "googletagmanager.com"
+    },
+    {
+        "name": "partner.googleadservices.com"
+    },
+    {
+        "name": "tpc.googlesyndication.com"
+    },
+    {
+        "name": "stats.g.doubleclick.net"
+    },
+    {
+        "name": "cm.g.doubleclick.net"
+    },
+    {
+        "name": "static.doubleclick.net"
+    },
+    {
+        "name": "adclick.g.doubleclick.net"
+    },
+    {
+        "name": "ad.doubleclick.net"
+    },
+    {
+        "name": "amazon-adsystem.com"
+    },
+    {
+        "name": "adsystem.amazon.com"
+    },
+    {
+        "name": "adsystem.amazon.co.uk"
+    },
+    {
+        "name": "adsystem.amazon.de"
+    },
+    {
+        "name": "adsystem.amazon.fr"
+    },
+    {
+        "name": "adsystem.amazon.it"
+    },
+    {
+        "name": "adsystem.amazon.es"
+    },
+    {
+        "name": "adsystem.amazon.ca"
+    },
+    {
+        "name": "adsystem.amazon.com.au"
+    },
+    {
+        "name": "adsystem.amazon.in"
+    },
+    {
+        "name": "adsystem.amazon.co.jp"
+    },
+    {
+        "name": "connect.facebook.net"
+    },
+    {
+        "name": "an.facebook.com"
+    },
+    {
+        "name": "ads.twitter.com"
+    },
+    {
+        "name": "ads.pinterest.com"
+    },
+    {
+        "name": "ads.linkedin.com"
+    },
+    {
+        "name": "ads.reddit.com"
+    },
+    {
+        "name": "ads.tiktok.com"
+    },
+    {
+        "name": "ads.snapchat.com"
+    },
+    {
+        "name": "ads.youtube.com"
+    },
+    {
+        "name": "ads.yahoo.com"
+    },
+    {
+        "name": "ads.yahoo.co.jp"
+    },
+    {
+        "name": "ads.microsoft.com"
+    },
+    {
+        "name": "bat.bing.com"
+    },
+    {
+        "name": "scorecardresearch.com"
+    },
+    {
+        "name": "sb.scorecardresearch.com"
+    },
+    {
+        "name": "analytics.google.com"
+    },
+    {
+        "name": "www.google-analytics.com"
+    },
+    {
+        "name": "outbrain.com"
+    },
+    {
+        "name": "taboola.com"
+    },
+    {
+        "name": "adsrvr.org"
+    },
+    {
+        "name": "rubiconproject.com"
+    },
+    {
+        "name": "pubmatic.com"
+    },
+    {
+        "name": "openx.net"
+    },
+    {
+        "name": "us-u.openx.net"
+    },
+    {
+        "name": "criteo.com"
+    },
+    {
+        "name": "criteo.net"
+    },
+    {
+        "name": "adnxs.com"
+    },
+    {
+        "name": "ib.adnxs.com"
+    },
+    {
+        "name": "casalemedia.com"
+    },
+    {
+        "name": "rlcdn.com"
+    },
+    {
+        "name": "krxd.net"
+    },
+    {
+        "name": "bluekai.com"
+    },
+    {
+        "name": "demdex.net"
+    },
+    {
+        "name": "everesttech.net"
+    },
+    {
+        "name": "media.net"
+    },
+    {
+        "name": "quantserve.com"
+    },
+    {
+        "name": "pixel.quantserve.com"
+    },
+    {
+        "name": "adsystem.com"
+    },
+    {
+        "name": "ads.yahoo.net"
+    },
+    {
+        "name": "yieldmo.com"
+    },
+    {
+        "name": "contextweb.com"
+    },
+    {
+        "name": "lijit.com"
+    },
+    {
+        "name": "sovrn.com"
+    },
+    {
+        "name": "spotxchange.com"
+    },
+    {
+        "name": "spotx.tv"
+    },
+    {
+        "name": "turn.com"
+    },
+    {
+        "name": "adsystem.windows.com"
+    },
+    {
+        "name": "mobileads.google.com"
+    },
+    {
+        "name": "googleads.g.doubleclick.net"
+    },
+    {
+        "name": "googlesyndication.com"
+    },
+    {
+        "name": "googleadservices.com"
+    },
+    {
+        "name": "adservice.google.com"
+    },
+    {
+        "name": "adservice.google.co.za"
+    },
+    {
+        "name": "adservice.google.co.uk"
+    },
+    {
+        "name": "adservice.google.de"
+    },
+    {
+        "name": "adservice.google.fr"
+    },
+    {
+        "name": "adservice.google.it"
+    },
+    {
+        "name": "adservice.google.es"
+    },
+    {
+        "name": "adservice.google.ca"
+    },
+    {
+        "name": "adservice.google.com.au"
+    },
+    {
+        "name": "adservice.google.co.jp"
+    },
+    {
+        "name": "adservice.google.in"
+    },
+    {
+        "name": "adskeeper.com"
+    },
+    {
+        "name": "adnow.com"
+    },
+    {
+        "name": "mgid.com"
+    },
+    {
+        "name": "revcontent.com"
+    },
+    {
+        "name": "contentabc.com"
+    },
+    {
+        "name": "zergnet.com"
+    },
+    {
+        "name": "sharethrough.com"
+    },
+    {
+        "name": "nativead.net"
+    },
+    {
+        "name": "bidswitch.net"
+    },
+    {
+        "name": "adsystem.mediavine.com"
+    },
+    {
+        "name": "jwplayer.com"
+    },
+    {
+        "name": "jwpcdn.com"
+    },
+    {
+        "name": "jwpsrv.com"
+    },
+    {
+        "name": "brightcove.com"
+    },
+    {
+        "name": "brightcove.net"
+    },
+    {
+        "name": "addthis.com"
+    },
+    {
+        "name": "addthisedge.com"
+    },
+    {
+        "name": "sharethis.com"
+    },
+    {
+        "name": "sharethrough.com"
+    },
+    {
+        "name": "adsystem.shopify.com"
+    },
+    {
+        "name": "facebook.com"
+    },
+    {
+        "name": "instagram.com"
+    },
+    {
+        "name": "hotjar.com"
+    },
+    {
+        "name": "fullstory.com"
+    },
+    {
+        "name": "mouseflow.com"
+    },
+    {
+        "name": "smartlook.com"
+    },
+    {
+        "name": "logrocket.com"
+    },
+    {
+        "name": "amplitude.com"
+    },
+    {
+        "name": "mixpanel.com"
+    },
+    {
+        "name": "segment.com"
+    },
+    {
+        "name": "branch.io"
+    },
+    {
+        "name": "appsflyer.com"
+    },
+    {
+        "name": "adjust.com"
+    },
+    {
+        "name": "kochava.com"
+    },
+    {
+        "name": "singular.net"
+    },
+    {
+        "name": "facebook.com"
+    },
+    {
+        "name": "twitter.com"
+    },
+    {
+        "name": "pinterest.com"
+    },
+    {
+        "name": "linkedin.com"
+    },
+    {
+        "name": "reddit.com"
+    },
+    {
+        "name": "tiktok.com"
+    },
+    {
+        "name": "snapchat.com"
+    },
+    {
+        "name": "youtube.com"
+    },
+    {
+        "name": "microsoft.com"
+    },
+    {
+        "name": "bing.com"
+    },
+    {
+        "name": "yahoo.com"
+    },
+    {
+        "name": "adobe.com"
+    },
+    {
+        "name": "salesforce.com"
+    },
+    {
+        "name": "oracle.com"
+    },
+    {
+        "name": "ibm.com"
+    },
+    {
+        "name": "chartbeat.com"
+    },
+    {
+        "name": "crazyegg.com"
+    },
+    {
+        "name": "optimizely.com"
+    },
+    {
+        "name": "vwo.com"
+    },
+    {
+        "name": "unbounce.com"
+    },
+    {
+        "name": "leadpages.com"
+    },
+    {
+        "name": "clickfunnels.com"
+    },
+    {
+        "name": "hubspot.com"
+    },
+    {
+        "name": "marketo.com"
+    },
+    {
+        "name": "pardot.com"
+    },
+    {
+        "name": "eloqua.com"
+    },
+    {
+        "name": "mailchimp.com"
+    },
+    {
+        "name": "constantcontact.com"
+    },
+    {
+        "name": "aweber.com"
+    },
+    {
+        "name": "getresponse.com"
+    },
+    {
+        "name": "convertkit.com"
+    },
+    {
+        "name": "drip.com"
+    },
+    {
+        "name": "activecampaign.com"
+    },
+    {
+        "name": "infusionsoft.com"
+    },
+    {
+        "name": "ontraport.com"
+    },
+    {
+        "name": "klaviyo.com"
+    },
+    {
+        "name": "sendgrid.com"
+    },
+    {
+        "name": "mailgun.com"
+    },
+    {
+        "name": "postmark.com"
+    },
+    {
+        "name": "mandrill.com"
+    },
+    {
+        "name": "sparkpost.com"
+    },
+    {
+        "name": "sendinblue.com"
+    },
+    {
+        "name": "campaignmonitor.com"
+    },
+    {
+        "name": "icontact.com"
+    },
+    {
+        "name": "verticalresponse.com"
+    },
+    {
+        "name": "benchmark.com"
+    },
+    {
+        "name": "constantcontact.com"
+    },
+    {
+        "name": "emma.com"
+    },
+    {
+        "name": "campaigner.com"
+    },
+    {
+        "name": "mailerlite.com"
+    },
+    {
+        "name": "moosend.com"
+    },
+    {
+        "name": "omnisend.com"
+    },
+    {
+        "name": "sendlane.com"
+    },
+    {
+        "name": "autopilot.com"
+    },
+    {
+        "name": "intercom.com"
+    },
+    {
+        "name": "zendesk.com"
+    },
+    {
+        "name": "freshworks.com"
+    },
+    {
+        "name": "drift.com"
+    },
+    {
+        "name": "livechat.com"
+    },
+    {
+        "name": "tawk.to"
+    },
+    {
+        "name": "crisp.chat"
+    },
+    {
+        "name": "olark.com"
+    },
+    {
+        "name": "uservoice.com"
+    },
+    {
+        "name": "helpscout.com"
+    },
+    {
+        "name": "kayako.com"
+    },
+    {
+        "name": "freshdesk.com"
+    },
+    {
+        "name": "groove.com"
+    },
+    {
+        "name": "desk.com"
+    },
+    {
+        "name": "salesforce.com"
+    },
+    {
+        "name": "pipedrive.com"
+    },
+    {
+        "name": "hubspot.com"
+    },
+    {
+        "name": "zoho.com"
+    },
+    {
+        "name": "insightly.com"
+    },
+    {
+        "name": "nutshell.com"
+    },
+    {
+        "name": "close.com"
+    },
+    {
+        "name": "copper.com"
+    },
+    {
+        "name": "airtable.com"
+    },
+    {
+        "name": "notion.so"
+    },
+    {
+        "name": "slack.com"
+    },
+    {
+        "name": "discord.com"
+    },
+    {
+        "name": "teams.microsoft.com"
+    },
+    {
+        "name": "zoom.us"
+    },
+    {
+        "name": "webex.com"
+    },
+    {
+        "name": "gotomeeting.com"
+    },
+    {
+        "name": "bluejeans.com"
+    },
+    {
+        "name": "ringcentral.com"
+    },
+    {
+        "name": "8x8.com"
+    },
+    {
+        "name": "dialpad.com"
+    },
+    {
+        "name": "grasshopper.com"
+    },
+    {
+        "name": "ooma.com"
+    },
+    {
+        "name": "vonage.com"
+    },
+    {
+        "name": "twilio.com"
+    },
+    {
+        "name": "sendbird.com"
+    },
+    {
+        "name": "pusher.com"
+    },
+    {
+        "name": "pubnub.com"
+    },
+    {
+        "name": "firebase.google.com"
+    },
+    {
+        "name": "aws.amazon.com"
+    },
+    {
+        "name": "azure.microsoft.com"
+    },
+    {
+        "name": "cloud.google.com"
+    },
+    {
+        "name": "digitalocean.com"
+    },
+    {
+        "name": "linode.com"
+    },
+    {
+        "name": "vultr.com"
+    },
+    {
+        "name": "hetzner.com"
+    },
+    {
+        "name": "ovh.com"
+    },
+    {
+        "name": "scaleway.com"
+    },
+    {
+        "name": "rackspace.com"
+    },
+    {
+        "name": "godaddy.com"
+    },
+    {
+        "name": "namecheap.com"
+    },
+    {
+        "name": "cloudflare.com"
+    },
+    {
+        "name": "fastly.com"
+    },
+    {
+        "name": "keycdn.com"
+    },
+    {
+        "name": "maxcdn.com"
+    },
+    {
+        "name": "jsdelivr.net"
+    },
+    {
+        "name": "unpkg.com"
+    },
+    {
+        "name": "cdnjs.cloudflare.com"
+    },
+    {
+        "name": "bootstrapcdn.com"
+    },
+    {
+        "name": "fontawesome.com"
+    },
+    {
+        "name": "fonts.googleapis.com"
+    },
+    {
+        "name": "fonts.gstatic.com"
+    },
+    {
+        "name": "typekit.net"
+    },
+    {
+        "name": "use.typekit.net"
+    },
+    {
+        "name": "adobe-fonts.com"
+    },
+    {
+        "name": "myfonts.com"
+    },
+    {
+        "name": "fontshop.com"
+    },
+    {
+        "name": "monotype.com"
+    },
+    {
+        "name": "linotype.com"
+    },
+    {
+        "name": "typography.com"
+    },
+    {
+        "name": "webtype.com"
+    },
+    {
+        "name": "fontdeck.com"
+    },
+    {
+        "name": "fontspring.com"
+    },
+    {
+        "name": "youworkforthem.com"
+    },
+    {
+        "name": "creativelive.com"
+    },
+    {
+        "name": "udemy.com"
+    },
+    {
+        "name": "coursera.org"
+    },
+    {
+        "name": "edx.org"
+    },
+    {
+        "name": "khanacademy.org"
+    },
+    {
+        "name": "codecademy.com"
+    },
+    {
+        "name": "freecodecamp.org"
+    },
+    {
+        "name": "pluralsight.com"
+    },
+    {
+        "name": "lynda.com"
+    },
+    {
+        "name": "skillshare.com"
+    },
+    {
+        "name": "masterclass.com"
+    },
+    {
+        "name": "brilliant.org"
+    },
+    {
+        "name": "duolingo.com"
+    },
+    {
+        "name": "babbel.com"
+    },
+    {
+        "name": "rosettastone.com"
+    },
+    {
+        "name": "busuu.com"
+    },
+    {
+        "name": "memrise.com"
+    },
+    {
+        "name": "anki.com"
+    },
+    {
+        "name": "quizlet.com"
+    },
+    {
+        "name": "studyblue.com"
+    },
+    {
+        "name": "chegg.com"
+    },
+    {
+        "name": "coursehero.com"
+    },
+    {
+        "name": "studymode.com"
+    },
+    {
+        "name": "123helpme.com"
+    },
+    {
+        "name": "papercamp.com"
+    },
+    {
+        "name": "essaybot.com"
+    },
+    {
+        "name": "grammarly.com"
+    },
+    {
+        "name": "hemingwayapp.com"
+    },
+    {
+        "name": "prowritingaid.com"
+    },
+    {
+        "name": "whitesmoke.com"
+    },
+    {
+        "name": "gingersoftware.com"
+    },
+    {
+        "name": "languagetool.org"
+    },
+    {
+        "name": "reverso.net"
+    },
+    {
+        "name": "deepl.com"
+    },
+    {
+        "name": "translate.google.com"
+    },
+    {
+        "name": "bing.com"
+    },
+    {
+        "name": "yandex.com"
+    },
+    {
+        "name": "baidu.com"
+    },
+    {
+        "name": "duckduckgo.com"
+    },
+    {
+        "name": "startpage.com"
+    },
+    {
+        "name": "searx.me"
+    },
+    {
+        "name": "swisscows.com"
+    },
+    {
+        "name": "qwant.com"
+    },
+    {
+        "name": "ecosia.org"
+    },
+    {
+        "name": "brave.com"
+    },
+    {
+        "name": "tor.com"
+    },
+    {
+        "name": "opera.com"
+    },
+    {
+        "name": "vivaldi.com"
+    },
+    {
+        "name": "edge.microsoft.com"
+    },
+    {
+        "name": "safari.apple.com"
+    },
+    {
+        "name": "chrome.google.com"
+    },
+    {
+        "name": "firefox.mozilla.org"
+    },
+    {
+        "name": "waterfox.net"
+    },
+    {
+        "name": "librewolf.net"
+    },
+    {
+        "name": "pale-moon.org"
+    },
+    {
+        "name": "seamonkey-project.org"
+    },
+    {
+        "name": "k-meleon.sourceforge.net"
+    },
+    {
+        "name": "maxthon.com"
+    },
+    {
+        "name": "avant.com"
+    },
+    {
+        "name": "sleipnir.com"
+    },
+    {
+        "name": "lunascape.tv"
+    },
+    {
+        "name": "comodo.com"
+    },
+    {
+        "name": "srware.net"
+    },
+    {
+        "name": "coolnovo.com"
+    },
+    {
+        "name": "torch.com"
+    },
+    {
+        "name": "yandex.com"
+    },
+    {
+        "name": "ucweb.com"
+    },
+    {
+        "name": "360.cn"
+    },
+    {
+        "name": "sogou.com"
+    },
+    {
+        "name": "qq.com"
+    },
+    {
+        "name": "liebao.cn"
+    },
+    {
+        "name": "2345.com"
+    },
+    {
+        "name": "kingsoft.com"
+    },
+    {
+        "name": "cheetah.cn"
+    },
+    {
+        "name": "maxthon.cn"
+    },
+    {
+        "name": "theworld.cn"
+    },
+    {
+        "name": "green.cn"
+    },
+    {
+        "name": "slim.cn"
+    }
+]
