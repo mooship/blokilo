@@ -32,5 +32,45 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-      - name: Build production binary
-        run: go build -tags netgo -ldflags '-s -w' -o blokilo ./cmd/blokilo
+  cross-platform-build:
+    name: Build cross-platform binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: arm64
+          - goos: darwin
+            goarch: arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Install dependencies
+        run: go mod tidy && go mod download
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          EXT=""
+          if [ "${GOOS}" = "windows" ]; then EXT=".exe"; fi
+          OUT="blokilo-${GOOS}-${GOARCH}${EXT}"
+          go build -tags netgo -ldflags '-s -w' -o "$OUT" ./cmd/blokilo
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blokilo-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: blokilo-${{ matrix.goos }}-${{ matrix.goarch }}*
