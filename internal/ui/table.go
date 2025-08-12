@@ -20,9 +20,9 @@ type TableRow struct {
 
 func NewResultsTable(rows []TableRow) table.Model {
 	columns := []table.Column{
-		{Title: "Domain", Width: 44},
-		{Title: "Status", Width: 18},
-		{Title: "Response Time", Width: 16},
+		{Title: "🌐 Domain", Width: 44},
+		{Title: "📈 Status", Width: 18},
+		{Title: "⏱️ Response Time", Width: 16},
 	}
 	tRows := make([]table.Row, len(rows))
 	for i, r := range rows {

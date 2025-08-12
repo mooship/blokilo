@@ -146,7 +146,7 @@ func TestSettingsView(t *testing.T) {
 	expectedElements := []string{
 		"🔧 Custom DNS Server",
 		"💡 Examples:",
-		"⌨️  [Enter] Save  [Esc] Cancel",
+		"⌨️  [⏎ Enter: Save, Esc: Cancel]",
 	}
 
 	for _, element := range expectedElements {

@@ -25,7 +25,7 @@ func TestNewResultsTable(t *testing.T) {
 		t.Errorf("expected 3 columns, got %d", len(columns))
 	}
 
-	expectedColumns := []string{"Domain", "Status", "Response Time"}
+	expectedColumns := []string{"🌐 Domain", "📈 Status", "⏱️ Response Time"}
 	for i, col := range columns {
 		if col.Title != expectedColumns[i] {
 			t.Errorf("column %d: expected %s, got %s", i, expectedColumns[i], col.Title)

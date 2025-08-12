@@ -50,7 +50,7 @@ func (m SettingsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.Err = nil
 				m.Value = ""
 				m.Focus = false
-				return m, nil
+				return m, func() tea.Msg { return settingsFinishedMsg{} }
 			}
 
 			host, port, err := net.SplitHostPort(val)
@@ -91,7 +91,7 @@ func (m SettingsModel) View() string {
 	}
 
 	helpText := "\n\n💡 Examples: 1.1.1.1, 8.8.8.8:53, 9.9.9.9:853"
-	controls := "\n\n⌨️  [Enter] Save  [Esc] Cancel"
+	controls := "\n\n⌨️  [⏎ Enter: Save, Esc: Cancel]"
 
 	return fmt.Sprintf("🔧 Custom DNS Server (host:port):\n%s%s%s%s",
 		m.DNSInput.View(), helpText, controls, errMsg)

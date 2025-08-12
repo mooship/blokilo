@@ -18,14 +18,14 @@ func TestNewMenuModel(t *testing.T) {
 		t.Errorf("expected 3 menu items, got %d", len(items))
 	}
 
-	expectedLabels := []string{"Start Test", "Settings", "Exit"}
+	expectedLabels := []string{"🧪  Start Test", "⚙️  Settings", "🚪  Exit"}
 	for i, item := range items {
-		if menuItem, ok := item.(MenuItem); ok {
+		if menuItem, ok := item.(*MenuItem); ok {
 			if menuItem.Label != expectedLabels[i] {
 				t.Errorf("menu item %d: expected %s, got %s", i, expectedLabels[i], menuItem.Label)
 			}
 		} else {
-			t.Errorf("menu item %d is not of type MenuItem", i)
+			t.Errorf("menu item %d is not of type *MenuItem", i)
 		}
 	}
 }
@@ -79,8 +79,8 @@ func TestMenuSelectItem(t *testing.T) {
 
 	msg := cmd()
 	if selectedMsg, ok := msg.(MenuSelectedMsg); ok {
-		if selectedMsg.Item.Label != "Start Test" {
-			t.Errorf("expected first item to be 'Start Test', got %s", selectedMsg.Item.Label)
+		if selectedMsg.Item.Label != "🧪  Start Test" {
+			t.Errorf("expected first item to be '🧪  Start Test', got %s", selectedMsg.Item.Label)
 		}
 	} else {
 		t.Error("selectItem command should return MenuSelectedMsg")

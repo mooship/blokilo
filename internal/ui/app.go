@@ -22,7 +22,18 @@ var (
 )
 
 func formatHeader(title string) string {
-	return headerStyle.Render("Blokilo - " + title)
+	switch title {
+	case "Testing":
+		return headerStyle.Render("🧪 Blokilo - " + title)
+	case "Test Results":
+		return headerStyle.Render("📊 Blokilo - " + title)
+	case "Summary":
+		return headerStyle.Render("📋 Blokilo - " + title)
+	case "Settings":
+		return headerStyle.Render("⚙️ Blokilo - " + title)
+	default:
+		return headerStyle.Render("Blokilo - " + title)
+	}
 }
 
 type AppView int
@@ -63,7 +74,7 @@ func (m AppModel) View() string {
 			currentDNS = dns.GetSystemDNS()
 		}
 
-		return formatHeader("Test Results") + "\n" + m.resultsTable.View() + "\n\n" + recommendationText + fmt.Sprintf("\n\nTested with: %s", currentDNS) + "\n\n[press Enter for detailed summary, Esq/Q to return to Menu]"
+		return formatHeader("Test Results") + "\n" + m.resultsTable.View() + "\n\n" + recommendationText + fmt.Sprintf("\n\n🔎 Tested with: %s", currentDNS) + "\n\n[⏎ Enter: Summary, Esc/Q: Menu]"
 	case ViewSummary:
 		return formatHeader("Summary") + "\n" + m.summary.View() + "\n\n[Esc/Q: Menu]"
 	case ViewSettings:
@@ -170,8 +181,8 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch m.view {
 	case ViewMenu:
 		if sel, ok := msg.(MenuSelectedMsg); ok {
-			switch sel.Item.Label {
-			case "Start Test":
+			switch sel.Item.ID {
+			case "start":
 				ctx := context.Background()
 				domainList, err := models.LoadDomainList(ctx, "domains.json")
 				if err != nil {
@@ -190,12 +201,11 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					runParallelTests(testCtx, domainList, m.resultsCh, m.progress.DNSAddr),
 					listenForTestResults(m.resultsCh),
 				)
-			case "Settings":
+			case "settings":
 				m.view = ViewSettings
-				m.settings.Focus = true
-				m.settings.DNSInput.Focus()
+				m.settings = NewSettingsModel(m.settings.GetSelectedDNS())
 				return m, nil
-			case "Exit":
+			case "exit":
 				return m, tea.Quit
 			}
 		}

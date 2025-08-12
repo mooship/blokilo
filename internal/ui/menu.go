@@ -6,6 +6,7 @@ import (
 )
 
 type MenuItem struct {
+	ID    string
 	Label string
 	Desc  string
 }
@@ -19,9 +20,9 @@ func (m MenuItem) Description() string { return m.Desc }
 func (m MenuItem) FilterValue() string { return m.Label }
 
 var menuItems = []list.Item{
-	MenuItem{"Start Test", "Run ad-block test on domains."},
-	MenuItem{"Settings", "Configure DNS, timeout, and more."},
-	MenuItem{"Exit", "Quit Blokilo."},
+	&MenuItem{ID: "start", Label: "🧪  Start Test", Desc: "Run ad-block test on domains."},
+	&MenuItem{ID: "settings", Label: "⚙️  Settings", Desc: "Configure DNS, timeout, and more."},
+	&MenuItem{ID: "exit", Label: "🚪  Exit", Desc: "Quit Blokilo."},
 }
 
 type MenuModel struct {
@@ -53,10 +54,7 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if h < minH {
 			h = minH
 		}
-		listHeight := h - 4
-		if listHeight < 3 {
-			listHeight = 3
-		}
+		listHeight := max(h-4, 3)
 		m.List.SetSize(w, listHeight)
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -77,9 +75,9 @@ func (m MenuModel) View() string {
 
 func (m MenuModel) selectItem() tea.Cmd {
 	selected := m.List.SelectedItem()
-	if item, ok := selected.(MenuItem); ok {
+	if item, ok := selected.(*MenuItem); ok {
 		return func() tea.Msg {
-			return MenuSelectedMsg{Item: item}
+			return MenuSelectedMsg{Item: *item}
 		}
 	}
 	return nil

@@ -58,7 +58,7 @@ func TestAppMenuSelection(t *testing.T) {
 	app.view = ViewMenu
 
 	settingsMsg := MenuSelectedMsg{
-		Item: MenuItem{Label: "Settings", Desc: "Configure DNS"},
+		Item: MenuItem{ID: "settings", Label: "⚙️  Settings", Desc: "Configure DNS, timeout, and more."},
 	}
 
 	updatedModel, _ := app.Update(settingsMsg)
