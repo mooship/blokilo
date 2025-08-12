@@ -1,16 +1,16 @@
-# Contributing to Blokilo
+# 🤝 Contributing to Blokilo
 
 Thank you for your interest in contributing to Blokilo! This guide will help you understand our development process and standards.
 
-## Development Environment Setup
+## 🛠️ Development Environment Setup
 
-### Prerequisites
+### Prerequisites 📦
 
 - **Go 1.24+** - Required for building and testing
 - **Git** - For version control
 - **Terminal** - For testing the TUI interface
 
-### Getting Started
+### Getting Started 🚀
 
 1. **Fork and Clone:**
    ```sh
@@ -34,9 +34,9 @@ Thank you for your interest in contributing to Blokilo! This guide will help you
    go test ./...
    ```
 
-## Coding Standards
+## 📝 Coding Standards
 
-### Go Formatting and Linting
+### Go Formatting and Linting 🧹
 
 - **All code must pass `gofmt`** - Use `go fmt ./...`
 - **All code must pass `golangci-lint`** - No warnings allowed
@@ -45,7 +45,7 @@ Thank you for your interest in contributing to Blokilo! This guide will help you
   golangci-lint run
   ```
 
-### Code Style Guidelines
+### Code Style Guidelines 🎨
 
 - **Type Safety:** Use typed structs and interfaces, avoid `interface{}` except when absolutely necessary
 - **Context Usage:** Use `context.Context` for functions involving network calls or cancellations
@@ -55,21 +55,21 @@ Thank you for your interest in contributing to Blokilo! This guide will help you
   - Provide actionable error messages
 - **File Organization:** Use dedicated `.go` files per domain (e.g., `dns.go`, `http.go`, `ui.go`)
 
-### Security Requirements
+### Security Requirements 🔒
 
 - **Never hardcode secrets** - Use config/environment variables
 - **Validate all inputs** before processing
 - **Follow secure coding practices**
 
-## Testing Requirements
+## 🧪 Testing Requirements
 
-### Test Coverage
+### Test Coverage 📈
 
 - **Unit tests required** for all new functions
 - **Integration tests** for end-to-end functionality
 - **Aim for high coverage** - run `go test -cover ./...`
 
-### Running Tests
+### Running Tests 🏃‍♂️
 
 ```sh
 # All tests
@@ -82,31 +82,31 @@ go test -cover ./...
 go test ./internal/dns/
 ```
 
-### Test Structure
+### Test Structure 🧩
 
 - Place tests in `*_test.go` files alongside source code
 - Use table-driven tests where appropriate
 - Test both success and error cases
 - Mock external dependencies
 
-## TUI Development Guidelines
+## 🖥️ TUI Development Guidelines
 
-### Accessibility Requirements
+### Accessibility Requirements ♿
 
 - **Keyboard Navigation:** All UI must be navigable with arrow keys/Enter
 - **Focus Handling:** Clear visual focus indicators
 - **Color Contrast:** Ensure sufficient contrast for readability
 - **Screen Reader Friendly:** Use semantic UI components
 
-### UI Framework Standards
+### UI Framework Standards 🧩
 
 - **Bubbletea:** Follow Bubbletea patterns for components
 - **Bubbles:** Use reusable components from Bubbles library
 - **Lipgloss:** Consistent styling and theming
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
-### Project Structure
+### Project Structure 🗂️
 
 ```
 cmd/blokilo/          # Application entry point
@@ -116,21 +116,21 @@ internal/http/        # HTTP testing functionality
 internal/ui/          # TUI components and views
 ```
 
-### Component Responsibilities
+### Component Responsibilities 🧩
 
 - **Models:** Domain objects, configuration, results
 - **DNS/HTTP:** Core testing logic, network operations
 - **UI:** User interface, navigation, display logic
 
-## Contribution Workflow
+## 🔄 Contribution Workflow
 
-### 1. Create an Issue First
+### 1. Create an Issue First 📝
 
 - Describe your proposed change, bug fix, or feature
 - Wait for feedback before starting work
 - Reference existing issues when possible
 
-### 2. Development Process
+### 2. Development Process 🛠️
 
 1. **Fork the repository** to your GitHub account
 2. **Create a feature branch:** `git checkout -b feature/your-feature`
@@ -140,7 +140,7 @@ internal/ui/          # TUI components and views
 6. **Run linting:** `golangci-lint run`
 7. **Test the TUI manually** to ensure functionality
 
-### 3. Commit Guidelines
+### 3. Commit Guidelines 🗒️
 
 - **Write clear commit messages**
 - **Use conventional commits format:**
@@ -152,7 +152,7 @@ internal/ui/          # TUI components and views
   test(http): add timeout test cases
   ```
 
-### 4. Pull Request Process
+### 4. Pull Request Process 🔀
 
 - **Reference the related issue:** "Closes #123"
 - **Describe your changes** in detail
@@ -160,9 +160,9 @@ internal/ui/          # TUI components and views
 - **Ensure all checks pass** (tests, linting)
 - **Be responsive to feedback**
 
-## Dependencies Policy
+## 📦 Dependencies Policy
 
-### Adding New Dependencies
+### Adding New Dependencies ➕
 
 New dependencies should:
 - Be well-maintained and popular
@@ -170,24 +170,24 @@ New dependencies should:
 - Have minimal impact on binary size and performance
 - Be discussed in an issue before addition
 
-### Updating Dependencies
+### Updating Dependencies ♻️
 
 - Keep dependencies up to date
 - Test thoroughly after updates
 - Document breaking changes
 
-## Code of Conduct
+## 🤗 Code of Conduct
 
 Please be respectful and considerate in all interactions. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for full details.
 
-## Getting Help
+## 🆘 Getting Help
 
 - **Questions:** Open an issue with the "question" label
 - **Bug Reports:** Use the bug report template
 - **Feature Requests:** Use the feature request template
 - **Security Issues:** Email maintainers privately
 
-## Recognition
+## 🌟 Recognition
 
 Contributors will be recognized in:
 - Project README
