@@ -184,7 +184,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch sel.Item.ID {
 			case "start":
 				ctx := context.Background()
-				domainList, err := models.LoadDomainList(ctx, "domains.json")
+				domainList, err := models.LoadDomainList(ctx, "domains.jsonc")
 				if err != nil {
 					domainList = models.BuiltInDomains
 				}

@@ -1,3 +1,5 @@
+// Based on adblock data by Eduard Ursu (d3ward)
+// Source: https://github.com/d3ward/toolz/blob/master/src/data/adblock_data.json
 {
     "Ads": {
         "Amazon": [

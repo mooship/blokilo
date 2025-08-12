@@ -10,41 +10,38 @@ import (
 )
 
 func TestDomainsJSONValidation(t *testing.T) {
-	// Get the path to domains.json relative to the project root
-	domainsPath := filepath.Join("..", "..", "domains.json")
+	domainsPath := filepath.Join("..", "..", "domains.jsonc")
 
-	// Check if the file exists
 	if _, err := os.Stat(domainsPath); os.IsNotExist(err) {
-		t.Skipf("domains.json not found at %s, skipping validation", domainsPath)
+		t.Skipf("domains.jsonc not found at %s, skipping validation", domainsPath)
 	}
 
 	t.Run("LoadDomainsJSON", func(t *testing.T) {
 		domains, err := LoadDomainList(context.Background(), domainsPath)
 		if err != nil {
-			t.Fatalf("Failed to load domains.json: %v", err)
+			t.Fatalf("Failed to load domains.jsonc: %v", err)
 		}
 
 		if len(domains) == 0 {
-			t.Error("No domains loaded from domains.json")
+			t.Error("No domains loaded from domains.jsonc")
 		}
 
 		t.Logf("Successfully loaded %d domains from grouped JSON format", len(domains))
 	})
 
 	t.Run("NoDuplicateDomains", func(t *testing.T) {
-		f, err := os.Open(domainsPath)
+		content, err := os.ReadFile(domainsPath)
 		if err != nil {
-			t.Fatalf("Failed to open domains.json: %v", err)
+			t.Fatalf("Failed to read domains.jsonc: %v", err)
 		}
-		defer f.Close()
+
+		jsonContent := StripJSONComments(string(content))
 
 		var groupedData map[string]map[string][]string
-		dec := json.NewDecoder(f)
-		if err := dec.Decode(&groupedData); err != nil {
-			t.Fatalf("Failed to decode domains.json: %v", err)
+		if err := json.Unmarshal([]byte(jsonContent), &groupedData); err != nil {
+			t.Fatalf("Failed to decode domains.jsonc: %v", err)
 		}
 
-		// Track all domains and their locations for duplicate detection
 		domainMap := make(map[string][]string)
 		totalDomains := 0
 
@@ -68,7 +65,6 @@ func TestDomainsJSONValidation(t *testing.T) {
 			}
 		}
 
-		// Check for duplicates
 		var duplicates []string
 		for domain, locations := range domainMap {
 			if len(locations) > 1 {
@@ -86,7 +82,7 @@ func TestDomainsJSONValidation(t *testing.T) {
 	t.Run("ValidDomainFormat", func(t *testing.T) {
 		domains, err := LoadDomainList(context.Background(), domainsPath)
 		if err != nil {
-			t.Fatalf("Failed to load domains.json: %v", err)
+			t.Fatalf("Failed to load domains.jsonc: %v", err)
 		}
 
 		var invalidDomains []string
@@ -97,7 +93,6 @@ func TestDomainsJSONValidation(t *testing.T) {
 				continue
 			}
 
-			// Basic domain validation - check for basic format
 			if strings.Contains(name, " ") {
 				invalidDomains = append(invalidDomains, name+" (contains spaces)")
 			}
@@ -115,20 +110,20 @@ func TestDomainsJSONValidation(t *testing.T) {
 	})
 
 	t.Run("GroupedStructureIntegrity", func(t *testing.T) {
-		f, err := os.Open(domainsPath)
+		content, err := os.ReadFile(domainsPath)
 		if err != nil {
-			t.Fatalf("Failed to open domains.json: %v", err)
+			t.Fatalf("Failed to read domains.jsonc: %v", err)
 		}
-		defer f.Close()
+
+		jsonContent := StripJSONComments(string(content))
 
 		var groupedData map[string]map[string][]string
-		dec := json.NewDecoder(f)
-		if err := dec.Decode(&groupedData); err != nil {
-			t.Fatalf("Failed to decode domains.json: %v", err)
+		if err := json.Unmarshal([]byte(jsonContent), &groupedData); err != nil {
+			t.Fatalf("Failed to decode domains.jsonc: %v", err)
 		}
 
 		if len(groupedData) == 0 {
-			t.Error("No categories found in domains.json")
+			t.Error("No categories found in domains.jsonc")
 		}
 
 		categoryCount := 0
@@ -158,13 +153,11 @@ func TestDomainsJSONValidation(t *testing.T) {
 }
 
 func TestLoadDomainListBackwardCompatibility(t *testing.T) {
-	// Test that the function can still handle flat JSON arrays
 	flatJSON := `[
 		{"name": "example.com"},
 		{"name": "test.com"}
 	]`
 
-	// Create a temporary file
 	tmpFile, err := os.CreateTemp("", "test_domains_*.json")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
