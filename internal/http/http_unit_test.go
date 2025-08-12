@@ -16,9 +16,9 @@ func TestHTTP_MockBlocked(t *testing.T) {
 }
 
 func TestHTTP_MockResolved(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	res := CheckHTTPConnectivity(ctx, "example.com", 2*time.Second, 0)
+	res := CheckHTTPConnectivity(ctx, "google.com", 8*time.Second, 1)
 	if res.Status != "RESOLVED" {
 		t.Errorf("expected RESOLVED, got %v (err: %v)", res.Status, res.Err)
 	}

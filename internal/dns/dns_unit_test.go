@@ -18,9 +18,9 @@ func TestDNS_MockBlocked(t *testing.T) {
 }
 
 func TestDNS_MockResolved(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	res := TestDomainDNS(ctx, "example.com", "8.8.8.8:53")
+	res := TestDomainDNS(ctx, "google.com", "8.8.8.8:53")
 	if res.Status != models.StatusResolved {
 		t.Errorf("expected Resolved, got %v (err: %v)", res.Status, res.Err)
 	}

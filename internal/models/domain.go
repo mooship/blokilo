@@ -27,26 +27,26 @@ func loadBuiltInDomains() []DomainEntry {
 	}
 
 	return []DomainEntry{
-		{Name: "googleads.g.doubleclick.net"},
 		{Name: "pagead2.googlesyndication.com"},
-		{Name: "doubleclick.net"},
-		{Name: "ads.yahoo.com"},
-		{Name: "ads.twitter.com"},
-		{Name: "ads.facebook.com"},
-		{Name: "scorecardresearch.com"},
-		{Name: "securepubads.g.doubleclick.net"},
-		{Name: "googletagservices.com"},
 		{Name: "googletagmanager.com"},
 		{Name: "amazon-adsystem.com"},
-		{Name: "googlesyndication.com"},
-		{Name: "googleadservices.com"},
-		{Name: "connect.facebook.net"},
-		{Name: "analytics.google.com"},
-		{Name: "www.google-analytics.com"},
-		{Name: "ads.pinterest.com"},
-		{Name: "ads.linkedin.com"},
+		{Name: "ad.doubleclick.net"},
 		{Name: "outbrain.com"},
 		{Name: "taboola.com"},
+		{Name: "analytics.google.com"},
+		{Name: "omtrdc.net"},
+		{Name: "mixpanel.com"},
+		{Name: "script.hotjar.com"},
+		{Name: "pixel.facebook.com"},
+		{Name: "ads.linkedin.com"},
+		{Name: "ads.pinterest.com"},
+		{Name: "ads.youtube.com"},
+		{Name: "ads.tiktok.com"},
+		{Name: "notify.bugsnag.com"},
+		{Name: "browser.sentry-cdn.com"},
+		{Name: "ads.yahoo.com"},
+		{Name: "api.ad.xiaomi.com"},
+		{Name: "samsungads.com"},
 	}
 }
 
@@ -121,8 +121,31 @@ func loadFromCSV(ctx context.Context, f *os.File) ([]DomainEntry, error) {
 func loadFromJSON(f *os.File) ([]DomainEntry, error) {
 	var entries []DomainEntry
 	dec := json.NewDecoder(f)
-	if err := dec.Decode(&entries); err != nil {
-		return nil, err
+
+	var groupedData map[string]map[string][]string
+	if err := dec.Decode(&groupedData); err != nil {
+		if _, seekErr := f.Seek(0, 0); seekErr != nil {
+			return nil, fmt.Errorf("failed to reset file pointer: %w", seekErr)
+		}
+
+		dec = json.NewDecoder(f)
+		var flatEntries []DomainEntry
+		if flatErr := dec.Decode(&flatEntries); flatErr != nil {
+			return nil, fmt.Errorf("failed to decode JSON as either grouped or flat format: %w", err)
+		}
+		return flatEntries, nil
 	}
+	for _, subcategories := range groupedData {
+		for _, domains := range subcategories {
+			for _, domain := range domains {
+				if strings.TrimSpace(domain) != "" {
+					entries = append(entries, DomainEntry{
+						Name: strings.TrimSpace(domain),
+					})
+				}
+			}
+		}
+	}
+
 	return entries, nil
 }
