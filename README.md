@@ -5,13 +5,12 @@ Blokilo is a terminal-based tool for testing ad-blocking setups (hosts file, DNS
 ## ✨ Features
 
 - 🚦 Test if ad/tracker domains are blocked (DNS/HTTP)
-- 🕵️ Identify blocking via hosts file, DNS, or Pi-hole
+- 🕵️ Identify blocking via hosts file or DNS
 - 📋 Built-in curated domain list (350+ verified ad/tracker domains)
 - 📊 Live progress bar, results table, and summary view
 - 🎨 Color-coded, accessible UI (Bubbletea, Bubbles, Lipgloss)
 - 🛠️ Custom DNS server support (for Pi-hole, etc)
 - ⚡ Parallel/concurrent test engine
-- 💾 Export results to file (planned)
 
 ## 🛠️ Installation
 
