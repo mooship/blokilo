@@ -50,8 +50,14 @@ func TestTableView(t *testing.T) {
 		t.Error("table view should contain domain name")
 	}
 
-	if !strings.Contains(view, "Domain") || !strings.Contains(view, "Status") || !strings.Contains(view, "Response Time") {
-		t.Error("table view should contain column headers")
+	if !strings.Contains(view, "🌐 Domain") {
+		t.Error("table view should contain domain header")
+	}
+	if !strings.Contains(view, "📈 Status") {
+		t.Error("table view should contain status header")
+	}
+	if !strings.Contains(view, "⏱️ Response Time") {
+		t.Error("table view should contain response time header")
 	}
 }
 
