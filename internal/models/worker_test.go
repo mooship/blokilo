@@ -23,6 +23,8 @@ func TestWorkerPoolRun(t *testing.T) {
 			Status:       StatusResolved,
 			ResponseTime: 10 * time.Millisecond,
 			Err:          nil,
+			Category:     "Test",
+			Subcategory:  "Test Category",
 		}
 	}
 

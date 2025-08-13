@@ -92,7 +92,14 @@ type SummaryModel struct {
 func NewSummaryModel(results []models.TestResult) SummaryModel {
 	classified := make([]models.ClassifiedResult, len(results))
 	for i, r := range results {
-		classified[i] = models.ClassifiedResult(r)
+		classified[i] = models.ClassifiedResult{
+			Domain:       r.Domain,
+			Status:       r.Status,
+			ResponseTime: r.ResponseTime,
+			Err:          r.Err,
+			Category:     r.Category,
+			Subcategory:  r.Subcategory,
+		}
 	}
 	stats := models.ComputeStats(classified)
 	rec := Recommend(stats)
@@ -119,15 +126,21 @@ type ResultsTableModel struct {
 }
 
 func NewResultsTableModel(results []models.TestResult) ResultsTableModel {
-	rows := make([]TableRow, len(results))
+	classified := make([]models.ClassifiedResult, len(results))
 	for i, r := range results {
-		rows[i] = TableRow{
+		classified[i] = models.ClassifiedResult{
 			Domain:       r.Domain,
-			Status:       string(r.Status),
-			ResponseTime: fmt.Sprintf("%.2fms", float64(r.ResponseTime.Microseconds())/1000),
+			Status:       r.Status,
+			ResponseTime: r.ResponseTime,
+			Err:          r.Err,
+			Category:     r.Category,
+			Subcategory:  r.Subcategory,
 		}
 	}
-	t := NewResultsTable(rows)
+
+	groups := models.GroupResultsByCategory(classified)
+
+	t := NewGroupedResultsTable(groups)
 	return ResultsTableModel{table: t}
 }
 
@@ -310,8 +323,10 @@ func runParallelTests(ctx context.Context, domainList []models.DomainEntry, resu
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				for domain := range jobs {
-					result := dns.TestDomainDNS(ctx, domain.Name, dnsServer)
+				for domainEntry := range jobs {
+					result := dns.TestDomainDNS(ctx, domainEntry.Name, dnsServer)
+					result.Category = domainEntry.Category
+					result.Subcategory = domainEntry.Subcategory
 
 					select {
 					case <-ctx.Done():

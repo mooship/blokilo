@@ -184,5 +184,88 @@ func TestLoadDomainListBackwardCompatibility(t *testing.T) {
 		if domain.Name != expectedDomains[i] {
 			t.Errorf("Expected domain %q, got %q", expectedDomains[i], domain.Name)
 		}
+		if domain.Category != "" {
+			t.Errorf("Expected empty category for flat JSON, got %q", domain.Category)
+		}
+		if domain.Subcategory != "" {
+			t.Errorf("Expected empty subcategory for flat JSON, got %q", domain.Subcategory)
+		}
+	}
+}
+
+func TestLoadDomainListGroupedFormat(t *testing.T) {
+	groupedJSON := `{
+		"Test Category": {
+			"Test Subcategory": [
+				"example.com",
+				"test.com"
+			],
+			"Another Subcategory": [
+				"another.com"
+			]
+		},
+		"Another Category": {
+			"Sub": [
+				"final.com"
+			]
+		}
+	}`
+
+	tmpFile, err := os.CreateTemp("", "test_domains_grouped_*.json")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(tmpFile.Name())
+	defer tmpFile.Close()
+
+	if _, err := tmpFile.WriteString(groupedJSON); err != nil {
+		t.Fatalf("Failed to write test data: %v", err)
+	}
+	tmpFile.Close()
+
+	domains, err := LoadDomainList(context.Background(), tmpFile.Name())
+	if err != nil {
+		t.Fatalf("Failed to load grouped JSON format: %v", err)
+	}
+
+	if len(domains) != 4 {
+		t.Errorf("Expected 4 domains, got %d", len(domains))
+	}
+
+	categoryMap := make(map[string]map[string][]string)
+	for _, domain := range domains {
+		if categoryMap[domain.Category] == nil {
+			categoryMap[domain.Category] = make(map[string][]string)
+		}
+		categoryMap[domain.Category][domain.Subcategory] = append(
+			categoryMap[domain.Category][domain.Subcategory],
+			domain.Name,
+		)
+	}
+
+	if len(categoryMap) != 2 {
+		t.Errorf("Expected 2 categories, got %d", len(categoryMap))
+	}
+
+	if len(categoryMap["Test Category"]) != 2 {
+		t.Errorf("Expected 2 subcategories in 'Test Category', got %d", len(categoryMap["Test Category"]))
+	}
+
+	foundExampleCom := false
+	for _, domain := range domains {
+		if domain.Name == "example.com" {
+			foundExampleCom = true
+			if domain.Category != "Test Category" {
+				t.Errorf("Expected category 'Test Category' for example.com, got %q", domain.Category)
+			}
+			if domain.Subcategory != "Test Subcategory" {
+				t.Errorf("Expected subcategory 'Test Subcategory' for example.com, got %q", domain.Subcategory)
+			}
+			break
+		}
+	}
+
+	if !foundExampleCom {
+		t.Error("Expected to find 'example.com' domain")
 	}
 }

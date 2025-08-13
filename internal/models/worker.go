@@ -11,6 +11,8 @@ type TestResult struct {
 	Status       ResultStatus
 	ResponseTime time.Duration
 	Err          error
+	Category     string
+	Subcategory  string
 }
 
 type TestFunc func(ctx context.Context, domain string) TestResult

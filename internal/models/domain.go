@@ -14,6 +14,8 @@ type DomainEntry struct {
 	Name         string        `json:"name"`
 	Status       ResultStatus  `json:"status"`
 	ResponseTime time.Duration `json:"response_time"`
+	Category     string        `json:"category,omitempty"`
+	Subcategory  string        `json:"subcategory,omitempty"`
 }
 
 var BuiltInDomains = loadBuiltInDomains()
@@ -85,12 +87,14 @@ func loadFromJSON(f *os.File) ([]DomainEntry, error) {
 		return flatEntries, nil
 	}
 
-	for _, subcategories := range groupedData {
-		for _, domains := range subcategories {
+	for category, subcategories := range groupedData {
+		for subcategory, domains := range subcategories {
 			for _, domain := range domains {
 				if strings.TrimSpace(domain) != "" {
 					entries = append(entries, DomainEntry{
-						Name: strings.TrimSpace(domain),
+						Name:        strings.TrimSpace(domain),
+						Category:    category,
+						Subcategory: subcategory,
 					})
 				}
 			}

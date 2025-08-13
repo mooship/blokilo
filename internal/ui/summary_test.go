@@ -20,10 +20,6 @@ func TestSummaryView(t *testing.T) {
 	recommendation := "Most ad/tracker domains are blocked. Good job!"
 	view := SummaryView(stats, recommendation)
 
-	if !strings.Contains(view, "Summary") {
-		t.Error("summary view should contain 'Summary' title")
-	}
-
 	if !strings.Contains(view, "Blocked: 70.0%") {
 		t.Error("summary view should contain blocked percentage")
 	}

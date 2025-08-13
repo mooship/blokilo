@@ -149,16 +149,24 @@ func TestNewResultsTableModel(t *testing.T) {
 	tableModel := NewResultsTableModel(results)
 
 	rows := tableModel.table.Rows()
-	if len(rows) != 2 {
-		t.Errorf("expected 2 rows, got %d", len(rows))
+	if len(rows) != 4 {
+		t.Errorf("expected 4 rows (including headers), got %d", len(rows))
 	}
 
-	if rows[0][0] != "test1.com" {
-		t.Errorf("expected first row domain to be 'test1.com', got %s", rows[0][0])
+	if !strings.Contains(rows[0][0], "Uncategorized") {
+		t.Errorf("expected first row to be category header with 'Uncategorized', got %s", rows[0][0])
 	}
 
-	if !strings.Contains(rows[0][2], "10.00ms") {
-		t.Errorf("expected first row response time to contain '10.00ms', got %s", rows[0][2])
+	if !strings.Contains(rows[1][0], "Other") {
+		t.Errorf("expected second row to be subcategory header with 'Other', got %s", rows[1][0])
+	}
+
+	if !strings.Contains(rows[2][0], "test1.com") {
+		t.Errorf("expected third row to contain 'test1.com', got %s", rows[2][0])
+	}
+
+	if !strings.Contains(rows[2][2], "10ms") {
+		t.Errorf("expected third row response time to contain '10ms', got %s", rows[2][2])
 	}
 }
 

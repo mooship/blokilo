@@ -18,8 +18,7 @@ func SummaryView(stats models.Stats, recommendation string) string {
 
 	errorPercent := 100.0 - stats.PercentBlocked - stats.PercentResolved
 
-	builder.WriteString(summaryTitle("📋 Summary"))
-	builder.WriteString(fmt.Sprintf("\n🚫 Blocked: %s%%", summaryStat(fmt.Sprintf("%.1f", stats.PercentBlocked))))
+	builder.WriteString(fmt.Sprintf("🚫 Blocked: %s%%", summaryStat(fmt.Sprintf("%.1f", stats.PercentBlocked))))
 	builder.WriteString(fmt.Sprintf("\n✅ Resolved: %s%%", summaryStat(fmt.Sprintf("%.1f", stats.PercentResolved))))
 
 	if errorPercent > 0.1 {
