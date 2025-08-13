@@ -92,14 +92,7 @@ type SummaryModel struct {
 func NewSummaryModel(results []models.TestResult) SummaryModel {
 	classified := make([]models.ClassifiedResult, len(results))
 	for i, r := range results {
-		classified[i] = models.ClassifiedResult{
-			Domain:       r.Domain,
-			Status:       r.Status,
-			ResponseTime: r.ResponseTime,
-			Err:          r.Err,
-			Category:     r.Category,
-			Subcategory:  r.Subcategory,
-		}
+		classified[i] = models.ClassifiedResult(r)
 	}
 	stats := models.ComputeStats(classified)
 	rec := Recommend(stats)
@@ -128,14 +121,7 @@ type ResultsTableModel struct {
 func NewResultsTableModel(results []models.TestResult) ResultsTableModel {
 	classified := make([]models.ClassifiedResult, len(results))
 	for i, r := range results {
-		classified[i] = models.ClassifiedResult{
-			Domain:       r.Domain,
-			Status:       r.Status,
-			ResponseTime: r.ResponseTime,
-			Err:          r.Err,
-			Category:     r.Category,
-			Subcategory:  r.Subcategory,
-		}
+		classified[i] = models.ClassifiedResult(r)
 	}
 
 	groups := models.GroupResultsByCategory(classified)

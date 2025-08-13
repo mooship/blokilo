@@ -9,8 +9,7 @@ import (
 )
 
 var (
-	summaryTitle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("205")).Render
-	summaryStat  = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("2")).Render
+	summaryStat = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("2")).Render
 )
 
 func SummaryView(stats models.Stats, recommendation string) string {

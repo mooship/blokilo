@@ -27,7 +27,7 @@ func NewResultsTable(rows []TableRow) table.Model {
 	columns := []table.Column{
 		{Title: "🌐 Domain", Width: 44},
 		{Title: "📈 Status", Width: 18},
-		{Title: "⏱️ Response Time", Width: 16},
+		{Title: "⏱️ Response Time", Width: 8},
 	}
 	tRows := make([]table.Row, len(rows))
 	for i, r := range rows {
@@ -69,7 +69,7 @@ func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
 	columns := []table.Column{
 		{Title: "🌐 Domain", Width: 44},
 		{Title: "📈 Status", Width: 18},
-		{Title: "⏱️ Response Time", Width: 16},
+		{Title: "⏱️ Response Time", Width: 8},
 	}
 
 	var tRows []table.Row
