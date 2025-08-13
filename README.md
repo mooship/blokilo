@@ -1,4 +1,6 @@
-# Blokilo — Ad Block Test TUI 🚫🛡️
+[![Go](https://github.com/mooship/blokilo/actions/workflows/go.yml/badge.svg)](https://github.com/mooship/blokilo/actions/workflows/go.yml) [![Gosec](https://github.com/mooship/blokilo/actions/workflows/gosec.yml/badge.svg)](https://github.com/mooship/blokilo/actions/workflows/gosec.yml)
+
+# Blokilo — Ad Block Test TUI 🚫🛡️ 
 
 Blokilo is a terminal-based tool for testing ad-blocking setups (hosts file, DNS filtering, Pi-hole, etc). It checks known ad/tracker domains to verify if they are blocked at the DNS or HTTP level, and presents results in a modern, accessible TUI.
 
