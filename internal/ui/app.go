@@ -135,8 +135,80 @@ func (m ResultsTableModel) View() string {
 }
 
 func (m ResultsTableModel) Update(msg tea.Msg) (ResultsTableModel, tea.Cmd) {
+	if sizeMsg, ok := msg.(tea.WindowSizeMsg); ok {
+		if len(m.table.Rows()) > 0 {
+			tbl, cmd := m.table.Update(sizeMsg)
+			m.table = tbl
+			return m, cmd
+		}
+		return m, nil
+	}
+
+	if keyMsg, ok := msg.(tea.KeyMsg); ok {
+		currentCursor := m.table.Cursor()
+		rowCount := len(m.table.Rows())
+
+		if rowCount == 0 {
+			return m, nil
+		}
+
+		switch keyMsg.String() {
+		case "down", "j":
+			if currentCursor >= rowCount-1 {
+				return m, nil
+			}
+		case "up", "k":
+			if currentCursor <= 0 {
+				return m, nil
+			}
+		case "pgdown", "ctrl+d":
+			if currentCursor >= rowCount-1 {
+				if currentCursor != rowCount-1 {
+					m.table.SetCursor(rowCount - 1)
+				}
+				return m, nil
+			}
+			newCursor := currentCursor + 10
+			if newCursor >= rowCount {
+				m.table.SetCursor(rowCount - 1)
+				return m, nil
+			}
+		case "pgup", "ctrl+u":
+			if currentCursor <= 0 {
+				return m, nil
+			}
+			newCursor := currentCursor - 10
+			if newCursor < 0 {
+				m.table.SetCursor(0)
+				return m, nil
+			}
+		case "end", "G":
+			m.table.SetCursor(rowCount - 1)
+			return m, nil
+		case "home", "g":
+			m.table.SetCursor(0)
+			return m, nil
+		case "enter", " ":
+			return m, nil
+		}
+	}
+
+	if len(m.table.Rows()) == 0 {
+		return m, nil
+	}
+
 	tbl, cmd := m.table.Update(msg)
 	m.table = tbl
+
+	if len(m.table.Rows()) > 0 {
+		if m.table.Cursor() >= len(m.table.Rows()) {
+			m.table.SetCursor(len(m.table.Rows()) - 1)
+		}
+		if m.table.Cursor() < 0 {
+			m.table.SetCursor(0)
+		}
+	}
+
 	return m, cmd
 }
 

@@ -232,3 +232,58 @@ func TestAppAllTestsComplete(t *testing.T) {
 		t.Error("testCancel should be nil after all tests complete")
 	}
 }
+
+func TestResultsTableBoundaryHandling(t *testing.T) {
+	results := []models.TestResult{
+		{Domain: "test1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10},
+		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5},
+	}
+
+	tableModel := NewResultsTableModel(results)
+
+	emptyTableModel := NewResultsTableModel([]models.TestResult{})
+	downKeyMsg := tea.KeyMsg{Type: tea.KeyDown}
+	_, cmd := emptyTableModel.Update(downKeyMsg)
+	if cmd != nil {
+		t.Error("empty table should return nil command for navigation keys")
+	}
+
+	endKeyMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("end")}
+	updatedModel, _ := tableModel.Update(endKeyMsg)
+
+	updatedModel, _ = updatedModel.Update(downKeyMsg)
+
+	for range 5 {
+		updatedModel, _ = updatedModel.Update(downKeyMsg)
+	}
+
+	homeKeyMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("home")}
+	updatedModel, _ = updatedModel.Update(homeKeyMsg)
+
+	upKeyMsg := tea.KeyMsg{Type: tea.KeyUp}
+	updatedModel, _ = updatedModel.Update(upKeyMsg)
+
+	for range 5 {
+		updatedModel, _ = updatedModel.Update(upKeyMsg)
+	}
+
+	pgDownMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("pgdown")}
+	updatedModel, _ = updatedModel.Update(endKeyMsg)
+	updatedModel, _ = updatedModel.Update(pgDownMsg)
+
+	pgUpMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("pgup")}
+	updatedModel, _ = updatedModel.Update(homeKeyMsg)
+	updatedModel, _ = updatedModel.Update(pgUpMsg)
+
+	enterMsg := tea.KeyMsg{Type: tea.KeyEnter}
+	updatedModel, cmd = updatedModel.Update(enterMsg)
+	if cmd != nil {
+		t.Error("enter key should return nil command (handled by parent)")
+	}
+
+	spaceMsg := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(" ")}
+	_, cmd = updatedModel.Update(spaceMsg)
+	if cmd != nil {
+		t.Error("space key should return nil command (handled by parent)")
+	}
+}
