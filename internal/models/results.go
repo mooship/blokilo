@@ -91,25 +91,29 @@ func GroupResultsByCategory(results []ClassifiedResult) []CategoryGroup {
 	subcategoryOrder := map[string][]string{
 		"Ads": {
 			"Amazon", "Google Ads", "Doubleclick.net", "Adcolony",
-			"Media.net", "Outbrain", "Taboola",
+			"Media.net", "Outbrain", "Taboola", "Criteo", "AppNexus",
+			"AdRoll", "Microsoft Ads",
 		},
 		"Analytics": {
 			"Google Analytics", "Hotjar", "MouseFlow", "FreshWorks",
 			"Luckyorange", "Stats WP Plugin", "Adobe Analytics", "Mixpanel",
+			"Microsoft Analytics", "Segment", "Salesforce Analytics", "Amplitude",
 		},
 		"Error Trackers": {
 			"Bugsnag", "Sentry", "Rollbar", "LogRocket",
+			"Airbrake", "Raygun", "New Relic",
 		},
 		"Social Trackers": {
 			"Facebook", "Twitter", "LinkedIn", "Pinterest",
-			"Reddit", "YouTube", "TikTok",
+			"Reddit", "YouTube", "TikTok", "Snapchat", "Instagram",
+			"WhatsApp Business",
 		},
 		"Mix": {
 			"Yahoo", "Yandex", "Unity",
 		},
 		"OEMs": {
 			"Realme", "Xiaomi", "Oppo", "Huawei",
-			"OnePlus", "Samsung", "Apple",
+			"OnePlus", "Samsung", "Apple", "LG", "Sony", "Roku",
 		},
 		"Uncategorized": {"Other"},
 	}

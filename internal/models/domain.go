@@ -21,7 +21,7 @@ type DomainEntry struct {
 var BuiltInDomains = loadBuiltInDomains()
 
 func loadBuiltInDomains() []DomainEntry {
-	if domains, err := LoadDomainList(context.Background(), "domains.jsonc"); err == nil {
+	if domains, err := LoadDomainList(context.Background(), "data/domains.jsonc"); err == nil {
 		return domains
 	}
 

@@ -10,7 +10,7 @@ import (
 )
 
 func TestDomainsJSONValidation(t *testing.T) {
-	domainsPath := filepath.Join("..", "..", "domains.jsonc")
+	domainsPath := filepath.Join("..", "..", "data", "domains.jsonc")
 
 	if _, err := os.Stat(domainsPath); os.IsNotExist(err) {
 		t.Skipf("domains.jsonc not found at %s, skipping validation", domainsPath)
