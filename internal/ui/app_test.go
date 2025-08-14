@@ -146,7 +146,8 @@ func TestNewResultsTableModel(t *testing.T) {
 		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5},
 	}
 
-	tableModel := NewResultsTableModel(results)
+	config := &models.CategoryConfig{}
+	tableModel := NewResultsTableModel(results, config)
 
 	rows := tableModel.table.Rows()
 	if len(rows) != 4 {
@@ -239,9 +240,10 @@ func TestResultsTableBoundaryHandling(t *testing.T) {
 		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5},
 	}
 
-	tableModel := NewResultsTableModel(results)
+	config := &models.CategoryConfig{}
+	tableModel := NewResultsTableModel(results, config)
 
-	emptyTableModel := NewResultsTableModel([]models.TestResult{})
+	emptyTableModel := NewResultsTableModel([]models.TestResult{}, config)
 	downKeyMsg := tea.KeyMsg{Type: tea.KeyDown}
 	_, cmd := emptyTableModel.Update(downKeyMsg)
 	if cmd != nil {

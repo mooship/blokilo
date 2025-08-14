@@ -92,7 +92,10 @@ func TestGroupResultsByCategory(t *testing.T) {
 		},
 	}
 
-	groups := GroupResultsByCategory(results)
+	config := &CategoryConfig{
+		CategoryOrder: []string{"Ads", "Analytics", "Uncategorized"},
+	}
+	groups := GroupResultsByCategory(results, config)
 
 	if len(groups) != 3 {
 		t.Errorf("Expected 3 category groups, got %d", len(groups))
@@ -159,7 +162,10 @@ func TestGroupResultsByCategoryStats(t *testing.T) {
 		},
 	}
 
-	groups := GroupResultsByCategory(results)
+	config := &CategoryConfig{
+		CategoryOrder: []string{"Ads"},
+	}
+	groups := GroupResultsByCategory(results, config)
 
 	if len(groups) != 1 {
 		t.Errorf("Expected 1 category group, got %d", len(groups))

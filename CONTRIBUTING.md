@@ -6,7 +6,7 @@ Thank you for your interest in contributing to Blokilo! This guide will help you
 
 ### Prerequisites 📦
 
-- **Go 1.25+** - Required for building and testing
+- **Go 1.25** - Required for building and testing
 - **Git** - For version control
 - **Terminal** - For testing the TUI interface
 

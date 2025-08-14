@@ -47,17 +47,18 @@ const (
 )
 
 type AppModel struct {
-	menu         MenuModel
-	progress     ProgressModel
-	testResults  []models.TestResult
-	resultsCh    chan models.TestResult
-	testRunning  bool
-	testCancel   context.CancelFunc
-	testCtx      context.Context
-	resultsTable ResultsTableModel
-	summary      SummaryModel
-	settings     SettingsModel
-	view         AppView
+	menu           MenuModel
+	progress       ProgressModel
+	testResults    []models.TestResult
+	resultsCh      chan models.TestResult
+	testRunning    bool
+	testCancel     context.CancelFunc
+	testCtx        context.Context
+	resultsTable   ResultsTableModel
+	summary        SummaryModel
+	settings       SettingsModel
+	view           AppView
+	categoryConfig *models.CategoryConfig
 }
 
 func (m AppModel) View() string {
@@ -118,13 +119,13 @@ type ResultsTableModel struct {
 	table table.Model
 }
 
-func NewResultsTableModel(results []models.TestResult) ResultsTableModel {
+func NewResultsTableModel(results []models.TestResult, config *models.CategoryConfig) ResultsTableModel {
 	classified := make([]models.ClassifiedResult, len(results))
 	for i, r := range results {
 		classified[i] = models.ClassifiedResult(r)
 	}
 
-	groups := models.GroupResultsByCategory(classified)
+	groups := models.GroupResultsByCategory(classified, config)
 
 	t := NewGroupedResultsTable(groups)
 	return ResultsTableModel{table: t}
@@ -213,14 +214,19 @@ func (m ResultsTableModel) Update(msg tea.Msg) (ResultsTableModel, tea.Cmd) {
 }
 
 func NewAppModel() AppModel {
+	config, err := models.LoadCategoryConfig("data/categories.jsonc")
+	if err != nil {
+		config = &models.CategoryConfig{}
+	}
 	return AppModel{
-		menu:         NewMenuModel(),
-		progress:     ProgressModel{},
-		testResults:  []models.TestResult{},
-		resultsTable: NewResultsTableModel([]models.TestResult{}),
-		summary:      NewSummaryModel([]models.TestResult{}),
-		settings:     NewSettingsModel(""),
-		view:         ViewMenu,
+		menu:           NewMenuModel(),
+		progress:       ProgressModel{},
+		testResults:    []models.TestResult{},
+		resultsTable:   NewResultsTableModel([]models.TestResult{}, config),
+		summary:        NewSummaryModel([]models.TestResult{}),
+		settings:       NewSettingsModel(""),
+		view:           ViewMenu,
+		categoryConfig: config,
 	}
 }
 
@@ -297,7 +303,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.testRunning = false
 			m.testCancel = nil
 			m.testCtx = nil
-			m.resultsTable = NewResultsTableModel(m.testResults)
+			m.resultsTable = NewResultsTableModel(m.testResults, m.categoryConfig)
 			m.summary = NewSummaryModel(m.testResults)
 			m.view = ViewResults
 			return m, nil

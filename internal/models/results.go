@@ -99,11 +99,7 @@ func ComputeStats(results []ClassifiedResult) Stats {
 	return s
 }
 
-func GroupResultsByCategory(results []ClassifiedResult) []CategoryGroup {
-	config, err := LoadCategoryConfig("data/categories.jsonc")
-	if err != nil {
-		config = &CategoryConfig{}
-	}
+func GroupResultsByCategory(results []ClassifiedResult, config *CategoryConfig) []CategoryGroup {
 	categoryOrder := config.CategoryOrder
 	subcategoryOrder := config.SubcategoryOrder
 
