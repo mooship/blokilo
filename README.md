@@ -20,7 +20,7 @@ Blokilo is a terminal-based tool for testing ad-blocking setups (hosts file, DNS
 
 ### Prerequisites 📦
 
-- Go 1.24+
+- Go 1.25+
 - Internet access for HTTP/DNS tests
 
 ### Build from Source 🏗️
