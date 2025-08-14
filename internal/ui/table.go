@@ -23,6 +23,30 @@ type TableRow struct {
 	IsHeader     bool
 }
 
+func newStyledTable(columns []table.Column, rows []table.Row) table.Model {
+	t := table.New(
+		table.WithColumns(columns),
+		table.WithRows(rows),
+		table.WithFocused(true),
+	)
+
+	styles := table.DefaultStyles()
+	styles.Header = styles.Header.
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color("240")).
+		BorderBottom(true).
+		Bold(true).
+		Foreground(lipgloss.Color("15"))
+	styles.Selected = styles.Selected.
+		Foreground(lipgloss.Color("229")).
+		Background(lipgloss.Color("57")).
+		Bold(false)
+	styles.Cell = styles.Cell.PaddingLeft(1).PaddingRight(1)
+	t.SetStyles(styles)
+
+	return t
+}
+
 func NewResultsTable(rows []TableRow) table.Model {
 	columns := []table.Column{
 		{Title: "🌐 Domain", Width: 44},
@@ -42,27 +66,8 @@ func NewResultsTable(rows []TableRow) table.Model {
 		}
 		tRows[i] = table.Row{r.Domain, status, r.ResponseTime}
 	}
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithRows(tRows),
-		table.WithFocused(true),
-	)
 
-	styles := table.DefaultStyles()
-	styles.Header = styles.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(true).
-		Foreground(lipgloss.Color("15"))
-	styles.Selected = styles.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	styles.Cell = styles.Cell.PaddingLeft(1).PaddingRight(1)
-	t.SetStyles(styles)
-
-	return t
+	return newStyledTable(columns, tRows)
 }
 
 func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
@@ -111,27 +116,7 @@ func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
 		}
 	}
 
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithRows(tRows),
-		table.WithFocused(true),
-	)
-
-	styles := table.DefaultStyles()
-	styles.Header = styles.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(true).
-		Foreground(lipgloss.Color("15"))
-	styles.Selected = styles.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	styles.Cell = styles.Cell.PaddingLeft(1).PaddingRight(1)
-	t.SetStyles(styles)
-
-	return t
+	return newStyledTable(columns, tRows)
 }
 
 func TableView(t table.Model) string {

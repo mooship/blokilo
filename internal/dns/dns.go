@@ -1,6 +1,7 @@
 package dns
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"net"
@@ -38,22 +39,26 @@ func GetSystemDNS() string {
 }
 
 func getWindowsDNS(ctx context.Context) string {
-	cmd := exec.CommandContext(ctx, "nslookup", "google.com")
+	cmd := exec.CommandContext(ctx, "ipconfig", "/all")
 	output, err := cmd.Output()
 	if err != nil {
 		return "System DNS (Windows)"
 	}
 
-	lines := strings.SplitSeq(string(output), "\n")
-	for line := range lines {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, "Server:") {
-			parts := strings.Fields(line)
+	scanner := bufio.NewScanner(strings.NewReader(string(output)))
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if strings.HasPrefix(line, "DNS Servers") {
+			parts := strings.Split(line, ":")
 			if len(parts) >= 2 {
-				return parts[1] + ":53"
+				dns := strings.TrimSpace(parts[1])
+				if dns != "" {
+					return dns + ":53"
+				}
 			}
 		}
 	}
+
 	return "System DNS (Windows)"
 }
 
@@ -64,34 +69,44 @@ func getMacDNS(ctx context.Context) string {
 		return "System DNS (macOS)"
 	}
 
-	lines := strings.SplitSeq(string(output), "\n")
-	for line := range lines {
-		line = strings.TrimSpace(line)
-		if strings.Contains(line, "nameserver[0]") {
+	scanner := bufio.NewScanner(strings.NewReader(string(output)))
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if strings.HasPrefix(line, "nameserver[") {
 			parts := strings.Split(line, ":")
 			if len(parts) >= 2 {
 				dns := strings.TrimSpace(parts[1])
-				return dns + ":53"
-			}
-		}
-	}
-	return "System DNS (macOS)"
-}
-
-func getLinuxDNS() string {
-	if data, err := os.ReadFile("/etc/resolv.conf"); err == nil {
-		lines := strings.SplitSeq(string(data), "\n")
-		for line := range lines {
-			line = strings.TrimSpace(line)
-			if after, ok := strings.CutPrefix(line, "nameserver "); ok {
-				dns := after
-				dns = strings.TrimSpace(dns)
 				if dns != "" {
 					return dns + ":53"
 				}
 			}
 		}
 	}
+
+	return "System DNS (macOS)"
+}
+
+func getLinuxDNS() string {
+	file, err := os.Open("/etc/resolv.conf")
+	if err != nil {
+		return "System DNS (Linux)"
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if strings.HasPrefix(line, "nameserver") {
+			parts := strings.Fields(line)
+			if len(parts) >= 2 {
+				dns := parts[1]
+				if dns != "" {
+					return dns + ":53"
+				}
+			}
+		}
+	}
+
 	return "System DNS (Linux)"
 }
 

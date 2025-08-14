@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+	"os"
 	"slices"
 	"time"
 )
@@ -57,6 +59,26 @@ type CategoryGroup struct {
 	Stats         Stats
 }
 
+type CategoryConfig struct {
+	CategoryOrder    []string            `json:"categoryOrder"`
+	SubcategoryOrder map[string][]string `json:"subcategoryOrder"`
+}
+
+func LoadCategoryConfig(path string) (*CategoryConfig, error) {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var config CategoryConfig
+	err = json.Unmarshal(file, &config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
+
 func ComputeStats(results []ClassifiedResult) Stats {
 	var s Stats
 	s.Total = len(results)
@@ -78,45 +100,12 @@ func ComputeStats(results []ClassifiedResult) Stats {
 }
 
 func GroupResultsByCategory(results []ClassifiedResult) []CategoryGroup {
-	categoryOrder := []string{
-		"Ads",
-		"Analytics",
-		"Error Trackers",
-		"Social Trackers",
-		"Mix",
-		"OEMs",
-		"Uncategorized",
+	config, err := LoadCategoryConfig("data/categories.jsonc")
+	if err != nil {
+		config = &CategoryConfig{}
 	}
-
-	subcategoryOrder := map[string][]string{
-		"Ads": {
-			"Amazon", "Google Ads", "Doubleclick.net", "Adcolony",
-			"Media.net", "Outbrain", "Taboola", "Criteo", "AppNexus",
-			"AdRoll", "Microsoft Ads",
-		},
-		"Analytics": {
-			"Google Analytics", "Hotjar", "MouseFlow", "FreshWorks",
-			"Luckyorange", "Stats WP Plugin", "Adobe Analytics", "Mixpanel",
-			"Microsoft Analytics", "Segment", "Salesforce Analytics", "Amplitude",
-		},
-		"Error Trackers": {
-			"Bugsnag", "Sentry", "Rollbar", "LogRocket",
-			"Airbrake", "Raygun", "New Relic",
-		},
-		"Social Trackers": {
-			"Facebook", "Twitter", "LinkedIn", "Pinterest",
-			"Reddit", "YouTube", "TikTok", "Snapchat", "Instagram",
-			"WhatsApp Business",
-		},
-		"Mix": {
-			"Yahoo", "Yandex", "Unity",
-		},
-		"OEMs": {
-			"Realme", "Xiaomi", "Oppo", "Huawei",
-			"OnePlus", "Samsung", "Apple", "LG", "Sony", "Roku",
-		},
-		"Uncategorized": {"Other"},
-	}
+	categoryOrder := config.CategoryOrder
+	subcategoryOrder := config.SubcategoryOrder
 
 	categoryMap := make(map[string]map[string][]ClassifiedResult)
 
