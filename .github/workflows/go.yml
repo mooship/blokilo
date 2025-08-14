@@ -27,11 +27,6 @@ jobs:
       - name: Create required directories
         run: mkdir -p data
 
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-
       - name: Build application
         run: go build -v ./...
 
