@@ -10,7 +10,7 @@ Blokilo is a terminal-based tool for testing ad-blocking setups (hosts file, DNS
 
 - 🚦 Test if ad/tracker domains are blocked (DNS/HTTP)
 - 🕵️ Identify blocking via hosts file or DNS
-- 📋 Built-in curated domain list (350+ verified ad/tracker domains)
+- 📋 Built-in curated domain list (190+ verified ad/tracker domains)
 - 📊 Live progress bar, results table, and summary view
 - 🎨 Color-coded, accessible UI (Bubbletea, Bubbles, Lipgloss)
 - 🛠️ Custom DNS server support (for Pi-hole, etc)
@@ -43,7 +43,7 @@ go build -o blokilo ./cmd/blokilo
 
 ## 🌐 Domain List
 
-The app uses a built-in curated list of 350+ verified ad/tracker domains covering all major advertising networks. This list is maintained and updated by the developers to ensure optimal testing coverage and accuracy.
+The app uses a built-in curated list of 190+ verified ad/tracker domains covering all major advertising networks. This list is maintained and updated by the developers to ensure optimal testing coverage and accuracy.
 
 The domains are selected to represent:
 - Major advertising networks (Google Ads, Facebook, etc.)
