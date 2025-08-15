@@ -41,7 +41,12 @@ func (m ProgressModel) View() string {
 
 	currentDNS := m.DNSAddr
 	if currentDNS == "" {
-		currentDNS = dns.GetSystemDNS()
+		systemDNS, err := dns.GetSystemDNS()
+		if err != nil {
+			currentDNS = "System"
+		} else {
+			currentDNS = systemDNS
+		}
 	}
 
 	return fmt.Sprintf("Testing: %s\n\n%s\n\n%d/%d\n\nDNS: %s",

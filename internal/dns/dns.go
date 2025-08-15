@@ -22,27 +22,36 @@ const (
 	SystemDNSTimeout = 3 * time.Second
 )
 
-func GetSystemDNS() string {
+func GetSystemDNS() (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), SystemDNSTimeout)
 	defer cancel()
 
+	var dnsServer string
+	var err error
+
 	switch runtime.GOOS {
 	case "windows":
-		return getWindowsDNS(ctx)
+		dnsServer, err = getWindowsDNS(ctx)
 	case "darwin":
-		return getMacDNS(ctx)
+		dnsServer, err = getMacDNS(ctx)
 	case "linux":
-		return getLinuxDNS()
+		dnsServer, err = getLinuxDNS(ctx)
 	default:
-		return getLinuxDNS()
+		dnsServer, err = getLinuxDNS(ctx)
 	}
+
+	if err != nil {
+		return "System", fmt.Errorf("failed to get system DNS: %w", err)
+	}
+
+	return dnsServer, nil
 }
 
-func getWindowsDNS(ctx context.Context) string {
+func getWindowsDNS(ctx context.Context) (string, error) {
 	cmd := exec.CommandContext(ctx, "ipconfig", "/all")
 	output, err := cmd.Output()
 	if err != nil {
-		return "System DNS (Windows)"
+		return "", fmt.Errorf("failed to run ipconfig: %w", err)
 	}
 
 	scanner := bufio.NewScanner(strings.NewReader(string(output)))
@@ -53,20 +62,20 @@ func getWindowsDNS(ctx context.Context) string {
 			if len(parts) >= 2 {
 				dns := strings.TrimSpace(parts[1])
 				if dns != "" {
-					return dns + ":53"
+					return dns + ":53", nil
 				}
 			}
 		}
 	}
 
-	return "System DNS (Windows)"
+	return "", fmt.Errorf("failed to find DNS server in ipconfig output")
 }
 
-func getMacDNS(ctx context.Context) string {
+func getMacDNS(ctx context.Context) (string, error) {
 	cmd := exec.CommandContext(ctx, "scutil", "--dns")
 	output, err := cmd.Output()
 	if err != nil {
-		return "System DNS (macOS)"
+		return "", fmt.Errorf("failed to run scutil: %w", err)
 	}
 
 	scanner := bufio.NewScanner(strings.NewReader(string(output)))
@@ -77,37 +86,44 @@ func getMacDNS(ctx context.Context) string {
 			if len(parts) >= 2 {
 				dns := strings.TrimSpace(parts[1])
 				if dns != "" {
-					return dns + ":53"
+					return dns + ":53", nil
 				}
 			}
 		}
 	}
 
-	return "System DNS (macOS)"
+	return "", fmt.Errorf("failed to find DNS server in scutil output")
 }
 
-func getLinuxDNS() string {
+func getLinuxDNS(ctx context.Context) (string, error) {
 	file, err := os.Open("/etc/resolv.conf")
 	if err != nil {
-		return "System DNS (Linux)"
+		return "", fmt.Errorf("failed to open /etc/resolv.conf: %w", err)
 	}
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
+		if err := ctx.Err(); err != nil {
+			return "", err
+		}
 		line := strings.TrimSpace(scanner.Text())
 		if strings.HasPrefix(line, "nameserver") {
 			parts := strings.Fields(line)
 			if len(parts) >= 2 {
 				dns := parts[1]
 				if dns != "" {
-					return dns + ":53"
+					return dns + ":53", nil
 				}
 			}
 		}
 	}
 
-	return "System DNS (Linux)"
+	if err := scanner.Err(); err != nil {
+		return "", fmt.Errorf("failed to scan /etc/resolv.conf: %w", err)
+	}
+
+	return "", fmt.Errorf("failed to find nameserver in /etc/resolv.conf")
 }
 
 func TestDomainDNS(ctx context.Context, domain string, dnsServer string) models.TestResult {

@@ -59,6 +59,8 @@ type AppModel struct {
 	settings       SettingsModel
 	view           AppView
 	categoryConfig *models.CategoryConfig
+	systemDNS      string
+	dnsErr         error
 }
 
 func (m AppModel) View() string {
@@ -72,7 +74,11 @@ func (m AppModel) View() string {
 
 		currentDNS := m.settings.GetSelectedDNS()
 		if currentDNS == "" {
-			currentDNS = dns.GetSystemDNS()
+			if m.dnsErr != nil {
+				currentDNS = fmt.Sprintf("System DNS (Error: %v)", m.dnsErr)
+			} else {
+				currentDNS = m.systemDNS
+			}
 		}
 
 		return formatHeader("Test Results") + "\n" + m.resultsTable.View() + "\n\n" + recommendationText + fmt.Sprintf("\n\n🔎 Tested with: %s", currentDNS) + "\n\n[⏎ Enter: Summary, Esc/Q: Menu]"
@@ -218,6 +224,9 @@ func NewAppModel() AppModel {
 	if err != nil {
 		config = &models.CategoryConfig{}
 	}
+
+	systemDNS, dnsErr := dns.GetSystemDNS()
+
 	return AppModel{
 		menu:           NewMenuModel(),
 		progress:       ProgressModel{},
@@ -227,6 +236,8 @@ func NewAppModel() AppModel {
 		settings:       NewSettingsModel(""),
 		view:           ViewMenu,
 		categoryConfig: config,
+		systemDNS:      systemDNS,
+		dnsErr:         dnsErr,
 	}
 }
 
