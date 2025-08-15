@@ -1,8 +1,8 @@
-# GitHub Copilot Instructions
+# Geminii Instructions
 
 1. **Context Usage**
 
-Copilot **must always reference context7** for decisions and code completions.
+Gemini **must always reference context7** for decisions and code completions.
 
 2. **Formatting & Linting**
 
