@@ -1,49 +1,107 @@
-# GitHub Copilot Instructions
+# copilot-instructions.md
 
-1. **Context Usage**
+## 1. Context Usage
 
-Copilot **must always reference context7** for decisions and code completions.
+* Copilot **must always reference Context7 MCP** for:
 
-2. **Formatting & Linting**
+  * All decisions
+  * Code completions
+  * Dependency suggestions
+  * UX/UI choices
+* Always **verify the latest state of Context7** before acting.
 
-Follow **`gofmt` rules strictly. No lint errors or warnings allowed. Use idiomatic Go formatting and style conventions. Fix issues preemptively.
+---
 
-3. **Build/Run Restrictions**
+## 2. Formatting & Linting
 
-Never build or run the app or trigger any compile/run processes. Only generate or edit source code.
+* Follow **`gofmt` rules strictly**.
+* Use **idiomatic Go style**.
+* Fix linting issues **preemptively**; no warnings or errors allowed.
+* Example:
 
-4. **Dependencies**
+  ```go
+  // Good
+  type User struct {
+      ID   int
+      Name string
+  }
+  ```
 
-Check `go.mod` for current dependencies. Suggest new dependencies **only if they:**
+---
 
-* Are well-maintained and popular.
-* Improve type safety, maintainability, or developer experience.
-* Have zero or minimal impact on binary size or performance.
+## 3. Build & Run Restrictions
 
-5. **Type Safety & Files**
+* **Never build or run** the app in code generation.
+* Copilot only generates or edits **source code**.
+
+---
+
+## 4. Dependencies
+
+* Check `go.mod` for current dependencies **before suggesting new ones**.
+* Suggest **new dependencies only if they**:
+
+  * Are popular and well-maintained.
+  * Improve type safety, maintainability, or developer experience.
+  * Have minimal or zero impact on binary size/performance.
+* Always justify new dependencies with **Context7 MCP**.
+
+---
+
+## 5. Type Safety & File Structure
 
 * Strictly use **typed structs and interfaces**.
-* Use **dedicated `.go` files per domain of responsibility**, e.g. `dns_test.go`, `http_test.go`, `ui.go`, `models.go`.
-* Avoid use of `interface{}` except when absolutely necessary; prefer concrete types.
-* Use `context.Context` for all functions that involve network calls or cancellations.
+* Avoid `interface{}` unless absolutely necessary. Prefer concrete types.
+* Use `context.Context` for all network calls or cancellable operations.
+* Use **dedicated `.go` files per domain**:
 
-6. **Accessibility & UX**
+  * `dns_test.go` — DNS tests
+  * `http_test.go` — HTTP tests
+  * `ui.go` — Terminal UI logic
+  * `models.go` — Data models
 
-* Follow Bubbletea and Lipgloss best practices for terminal accessibility (keyboard navigation, focus handling).
-* Use semantic and reusable UI components from Bubbles.
-* Ensure color choices have sufficient contrast.
+---
 
-7. **Security**
+## 6. Accessibility & UX
 
-Never hardcode secrets or sensitive information. Use config/environment variables for anything sensitive.
+* Follow **Bubbletea** and **Lipgloss** best practices for:
 
-8. **Error Handling**
+  * Terminal accessibility
+  * Keyboard navigation
+  * Focus management
+* Use **semantic, reusable components** from Bubbles.
+* Ensure **color contrast is sufficient** for readability.
+* Confirm all UX decisions with **Context7 MCP**.
 
-* Return errors explicitly.
-* Wrap errors with context (`fmt.Errorf("...: %w", err)`).
-* Validate inputs strictly before processing.
-* Provide actionable error messages.
+---
 
-9. **Confirmation for Large Edits**
+## 7. Security
 
-Before any major refactor or large code generation, prompt the user for confirmation.
+* **Never hardcode secrets** or sensitive information.
+* Use **config/environment variables** for credentials, tokens, and secrets.
+* Validate all external input strictly.
+
+---
+
+## 8. Error Handling
+
+* Return errors explicitly; never ignore them.
+* Wrap errors with context:
+
+  ```go
+  if err != nil {
+      return fmt.Errorf("failed to load config: %w", err)
+  }
+  ```
+* Validate inputs before processing.
+* Provide **actionable and clear error messages**.
+
+---
+
+## 9. Confirmation for Large Edits
+
+* Copilot must **prompt the user** before:
+
+  * Major refactors
+  * Large code generation
+* Always document what will change and why **Context7 MCP** requires it.
