@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -54,7 +56,27 @@ func LoadDomainList(ctx context.Context, path string) ([]DomainEntry, error) {
 		return nil, fmt.Errorf("file path cannot be empty")
 	}
 
-	f, err := os.Open(path)
+	cleaned := filepath.Clean(path)
+
+	allowed := false
+	tempDir := filepath.Clean(os.TempDir())
+	if filepath.IsAbs(cleaned) {
+		s := filepath.ToSlash(cleaned)
+		if strings.HasPrefix(s, filepath.ToSlash(tempDir)+"/") || strings.Contains(s, "/data/") {
+			allowed = true
+		}
+	} else {
+		s := filepath.ToSlash(cleaned)
+		if strings.HasPrefix(s, "data/") || strings.Contains(s, "/data/") {
+			allowed = true
+		}
+	}
+
+	if !allowed {
+		return nil, fmt.Errorf("only files under the data/ directory or temp dir are allowed: %q", path)
+	}
+
+	f, err := os.Open(cleaned)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file %q: %w", path, err)
 	}
@@ -69,10 +91,11 @@ func LoadDomainList(ctx context.Context, path string) ([]DomainEntry, error) {
 }
 
 func loadFromJSON(f *os.File) ([]DomainEntry, error) {
-	content, err := os.ReadFile(f.Name())
+	contentBytes, err := io.ReadAll(f)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
+	content := string(contentBytes)
 
 	jsonContent := StripJSONComments(string(content))
 

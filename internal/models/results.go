@@ -2,8 +2,11 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
+	"strings"
 	"time"
 )
 
@@ -65,7 +68,30 @@ type CategoryConfig struct {
 }
 
 func LoadCategoryConfig(path string) (*CategoryConfig, error) {
-	file, err := os.ReadFile(path)
+	if path == "" {
+		return nil, fmt.Errorf("file path cannot be empty")
+	}
+	cleaned := filepath.Clean(path)
+
+	allowed := false
+	tempDir := filepath.Clean(os.TempDir())
+	if filepath.IsAbs(cleaned) {
+		s := filepath.ToSlash(cleaned)
+		if strings.HasPrefix(s, filepath.ToSlash(tempDir)+"/") || strings.Contains(s, "/data/") {
+			allowed = true
+		}
+	} else {
+		s := filepath.ToSlash(cleaned)
+		if strings.HasPrefix(s, "data/") || strings.Contains(s, "/data/") {
+			allowed = true
+		}
+	}
+
+	if !allowed {
+		return nil, fmt.Errorf("only files under the data/ directory or temp dir are allowed: %q", path)
+	}
+
+	file, err := os.ReadFile(cleaned)
 	if err != nil {
 		return nil, err
 	}
