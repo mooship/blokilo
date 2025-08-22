@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -51,7 +51,7 @@ jobs:
           - goos: darwin
             goarch: arm64
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -72,7 +72,7 @@ jobs:
           go build -tags netgo -ldflags '-s -w' -o "$OUT" ./cmd/blokilo
 
       - name: Upload binary to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: blokilo-${{ matrix.goos }}-${{ matrix.goarch }}*
           draft: false
