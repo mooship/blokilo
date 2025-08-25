@@ -6,6 +6,24 @@ import (
 	"time"
 )
 
+func TestHTTP_Timeout(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Nanosecond)
+	defer cancel()
+	res := CheckHTTPConnectivity(ctx, "google.com", 8*time.Second, 1)
+	if res.Status != "ERROR" && res.Status != "BLOCKED" {
+		t.Errorf("expected ERROR or BLOCKED for timeout, got %v", res.Status)
+	}
+}
+
+func TestHTTP_InvalidDomain(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	res := CheckHTTPConnectivity(ctx, "!!!invalid!!!", 100*time.Millisecond, 0)
+	if res.Status != "ERROR" {
+		t.Errorf("expected ERROR for invalid domain, got %v", res.Status)
+	}
+}
+
 func TestHTTP_MockBlocked(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()

@@ -98,11 +98,34 @@ func TestRecommend(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			recommendation := Recommend(tc.stats)
-			if !strings.Contains(recommendation, tc.expectedPhrase) {
-				t.Errorf("recommendation should contain '%s', got: %s", tc.expectedPhrase, recommendation)
-			}
-		})
+		recommendation := Recommend(tc.stats)
+		if !strings.Contains(recommendation, tc.expectedPhrase) {
+			t.Errorf("expected recommendation to contain %q, got %q", tc.expectedPhrase, recommendation)
+		}
+	}
+}
+
+func TestSummaryView_ZeroTotal(t *testing.T) {
+	stats := models.Stats{}
+	recommendation := "No data"
+	view := SummaryView(stats, recommendation)
+	if !strings.Contains(view, "0/0") && !strings.Contains(view, "0%") {
+		t.Error("summary view should handle zero total domains")
+	}
+}
+
+func TestSummaryView_AllErrors(t *testing.T) {
+	stats := models.Stats{
+		Total:           5,
+		Blocked:         0,
+		Resolved:        0,
+		Errored:         5,
+		PercentBlocked:  0.0,
+		PercentResolved: 0.0,
+	}
+	recommendation := "All errors"
+	view := SummaryView(stats, recommendation)
+	if !strings.Contains(view, "Errors: 100.0%") {
+		t.Error("summary view should show 100% errors when all errored")
 	}
 }
