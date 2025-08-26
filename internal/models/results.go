@@ -19,12 +19,13 @@ const (
 )
 
 type ClassifiedResult struct {
-	Domain       string
-	Status       ResultStatus
-	ResponseTime time.Duration
-	Err          error
-	Category     string
-	Subcategory  string
+	Domain         string
+	Status         ResultStatus
+	ResponseTime   time.Duration
+	Err            error
+	Category       string
+	Subcategory    string
+	HTTPStatusCode int
 }
 
 func ClassifyResult(dnsStatus, httpStatus ResultStatus, dnsErr, httpErr error) ResultStatus {

@@ -15,12 +15,13 @@ var (
 )
 
 type TableRow struct {
-	Domain       string
-	Status       string
-	ResponseTime string
-	Category     string
-	Subcategory  string
-	IsHeader     bool
+	Domain         string
+	Status         string
+	ResponseTime   string
+	HTTPStatusCode string
+	Category       string
+	Subcategory    string
+	IsHeader       bool
 }
 
 func newStyledTable(columns []table.Column, rows []table.Row) table.Model {
@@ -49,9 +50,10 @@ func newStyledTable(columns []table.Column, rows []table.Row) table.Model {
 
 func NewResultsTable(rows []TableRow) table.Model {
 	columns := []table.Column{
-		{Title: "🌐 Domain", Width: 44},
-		{Title: "📈 Status", Width: 18},
-		{Title: "⏱️ Response Time", Width: 16},
+		{Title: "🌐 Domain", Width: 32},
+		{Title: "📈 Status", Width: 16},
+		{Title: "⏱️ Time", Width: 8},
+		{Title: "HTTP", Width: 6},
 	}
 	tRows := make([]table.Row, len(rows))
 	for i, r := range rows {
@@ -64,17 +66,23 @@ func NewResultsTable(rows []TableRow) table.Model {
 		case string(models.StatusError):
 			status = colorError.Render(status)
 		}
-		tRows[i] = table.Row{r.Domain, status, r.ResponseTime}
+		httpStatus := r.HTTPStatusCode
+		tRows[i] = table.Row{
+			r.Domain,
+			status,
+			r.ResponseTime,
+			httpStatus,
+		}
 	}
-
 	return newStyledTable(columns, tRows)
 }
 
 func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
 	columns := []table.Column{
-		{Title: "🌐 Domain", Width: 44},
-		{Title: "📈 Status", Width: 18},
-		{Title: "⏱️ Response Time", Width: 16},
+		{Title: "🌐 Domain", Width: 32},
+		{Title: "📈 Status", Width: 16},
+		{Title: "⏱️ Time", Width: 8},
+		{Title: "HTTP", Width: 6},
 	}
 
 	var tRows []table.Row
@@ -84,7 +92,7 @@ func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
 			Bold(true).
 			Foreground(lipgloss.Color("12")).
 			Render("📁 " + group.Category)
-		tRows = append(tRows, table.Row{categoryHeader, "", ""})
+		tRows = append(tRows, table.Row{categoryHeader, "", "", ""})
 
 		for _, subgroup := range group.Subcategories {
 			subcategoryHeader := lipgloss.NewStyle().
@@ -92,7 +100,7 @@ func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
 				Foreground(lipgloss.Color("14")).
 				PaddingLeft(2).
 				Render("📂 " + subgroup.Subcategory)
-			tRows = append(tRows, table.Row{subcategoryHeader, "", ""})
+			tRows = append(tRows, table.Row{subcategoryHeader, "", "", ""})
 
 			for _, result := range subgroup.Results {
 				status := string(result.Status)
@@ -111,7 +119,12 @@ func NewGroupedResultsTable(groups []models.CategoryGroup) table.Model {
 					responseTime = "0ms"
 				}
 
-				tRows = append(tRows, table.Row{domain, status, responseTime})
+				httpStatus := fmt.Sprintf("%d", result.HTTPStatusCode)
+				if result.HTTPStatusCode == 0 {
+					httpStatus = ""
+				}
+
+				tRows = append(tRows, table.Row{domain, status, responseTime, httpStatus})
 			}
 		}
 	}

@@ -10,9 +10,9 @@ import (
 
 func TestNewResultsTable(t *testing.T) {
 	rows := []TableRow{
-		{Domain: "example.com", Status: string(models.StatusBlocked), ResponseTime: "12ms"},
-		{Domain: "google.com", Status: string(models.StatusResolved), ResponseTime: "6ms"},
-		{Domain: "error.com", Status: string(models.StatusError), ResponseTime: "0ms"},
+		{Domain: "example.com", Status: string(models.StatusBlocked), ResponseTime: "12ms", HTTPStatusCode: "403"},
+		{Domain: "google.com", Status: string(models.StatusResolved), ResponseTime: "6ms", HTTPStatusCode: "200"},
+		{Domain: "error.com", Status: string(models.StatusError), ResponseTime: "0ms", HTTPStatusCode: ""},
 	}
 
 	table := NewResultsTable(rows)
@@ -22,12 +22,15 @@ func TestNewResultsTable(t *testing.T) {
 	}
 
 	columns := table.Columns()
-	if len(columns) != 3 {
-		t.Errorf("expected 3 columns, got %d", len(columns))
+	if len(columns) != 4 {
+		t.Errorf("expected 4 columns, got %d", len(columns))
 	}
 
-	expectedColumns := []string{"🌐 Domain", "📈 Status", "⏱️ Response Time"}
+	expectedColumns := []string{"🌐 Domain", "📈 Status", "⏱️ Time", "HTTP"}
 	for i, col := range columns {
+		if i >= len(expectedColumns) {
+			break
+		}
 		if col.Title != expectedColumns[i] {
 			t.Errorf("column %d: expected %s, got %s", i, expectedColumns[i], col.Title)
 		}
@@ -71,7 +74,7 @@ func TestTableRowStatusColors(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		rows := []TableRow{{Domain: "test.com", Status: tc.status, ResponseTime: "10ms"}}
+		rows := []TableRow{{Domain: "test.com", Status: tc.status, ResponseTime: "10ms", HTTPStatusCode: "200"}}
 		table := NewResultsTable(rows)
 
 		tableRows := table.Rows()
@@ -118,8 +121,8 @@ func TestNewGroupedResultsTable(t *testing.T) {
 		t.Error("grouped table should have rows")
 	}
 
-	if len(table.Columns()) != 3 {
-		t.Errorf("expected 3 columns, got %d", len(table.Columns()))
+	if len(table.Columns()) != 4 {
+		t.Errorf("expected 4 columns, got %d", len(table.Columns()))
 	}
 
 	view := TableView(table)

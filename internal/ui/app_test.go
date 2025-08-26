@@ -118,10 +118,10 @@ func TestAppKeyHandling(t *testing.T) {
 
 func TestNewSummaryModel(t *testing.T) {
 	results := []models.TestResult{
-		{Domain: "blocked1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10},
-		{Domain: "blocked2.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 15},
-		{Domain: "resolved1.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5},
-		{Domain: "error1.com", Status: models.StatusError, ResponseTime: time.Millisecond * 0},
+		{Domain: "blocked1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10, HTTPStatusCode: 403},
+		{Domain: "blocked2.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 15, HTTPStatusCode: 403},
+		{Domain: "resolved1.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5, HTTPStatusCode: 200},
+		{Domain: "error1.com", Status: models.StatusError, ResponseTime: time.Millisecond * 0, HTTPStatusCode: 0},
 	}
 
 	summary := NewSummaryModel(results)
@@ -142,8 +142,8 @@ func TestNewSummaryModel(t *testing.T) {
 
 func TestNewResultsTableModel(t *testing.T) {
 	results := []models.TestResult{
-		{Domain: "test1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10},
-		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5},
+		{Domain: "test1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10, HTTPStatusCode: 403},
+		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5, HTTPStatusCode: 200},
 	}
 
 	config := &models.CategoryConfig{}
@@ -236,8 +236,8 @@ func TestAppAllTestsComplete(t *testing.T) {
 
 func TestResultsTableBoundaryHandling(t *testing.T) {
 	results := []models.TestResult{
-		{Domain: "test1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10},
-		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5},
+		{Domain: "test1.com", Status: models.StatusBlocked, ResponseTime: time.Millisecond * 10, HTTPStatusCode: 403},
+		{Domain: "test2.com", Status: models.StatusResolved, ResponseTime: time.Millisecond * 5, HTTPStatusCode: 200},
 	}
 
 	config := &models.CategoryConfig{}

@@ -7,12 +7,13 @@ import (
 )
 
 type TestResult struct {
-	Domain       string
-	Status       ResultStatus
-	ResponseTime time.Duration
-	Err          error
-	Category     string
-	Subcategory  string
+	Domain         string
+	Status         ResultStatus
+	ResponseTime   time.Duration
+	Err            error
+	Category       string
+	Subcategory    string
+	HTTPStatusCode int
 }
 
 type TestFunc func(ctx context.Context, domain string) TestResult

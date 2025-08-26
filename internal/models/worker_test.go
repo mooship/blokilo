@@ -19,12 +19,13 @@ func TestWorkerPoolRun(t *testing.T) {
 
 	testFn := func(ctx context.Context, domain string) TestResult {
 		return TestResult{
-			Domain:       domain,
-			Status:       StatusResolved,
-			ResponseTime: 10 * time.Millisecond,
-			Err:          nil,
-			Category:     "Test",
-			Subcategory:  "Test Category",
+			Domain:         domain,
+			Status:         StatusResolved,
+			ResponseTime:   10 * time.Millisecond,
+			Err:            nil,
+			Category:       "Test",
+			Subcategory:    "Test Category",
+			HTTPStatusCode: 200,
 		}
 	}
 

@@ -4,35 +4,55 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/mooship/blokilo/internal/dns"
+	"github.com/mooship/blokilo/internal/httpclient"
 	"github.com/mooship/blokilo/internal/models"
 )
 
 var (
 	headerStyle = lipgloss.NewStyle().
-		Bold(true).
-		Foreground(lipgloss.Color("15")).
-		Background(lipgloss.Color("57")).
-		Padding(0, 1).
-		MarginBottom(2)
+			Bold(true).
+			Foreground(lipgloss.Color("15")).
+			Background(lipgloss.Color("57")).
+			Padding(0, 1).
+			MarginBottom(2)
+
+	testCancelHint = "[Esc/Q to Cancel]"
+	resultsHint    = "[⏎ Enter: Summary, Esc/Q: Menu]"
+	summaryHint    = "[Esc/Q: Menu]"
+
+	headerTesting     = "Testing"
+	headerTestResults = "Test Results"
+	headerSummary     = "Summary"
+	headerSettings    = "Settings"
+	headerDefault     = "Blokilo"
+
+	systemDNSErrorFmt = "System DNS (Error: %v)"
+	testedWithFmt     = "\n\n🔎 Tested with: %s"
+
+	msgAllBlocked   = "All ad/tracker domains are blocked. Excellent job!"
+	msgMostBlocked  = "Most ad/tracker domains are blocked. Good job!"
+	msgPartialBlock = "Partial blocking detected. Consider tightening your filters."
+	msgNoBlocking   = "No blocking detected. Check your DNS or hosts file setup."
 )
 
 func formatHeader(title string) string {
 	switch title {
-	case "Testing":
+	case headerTesting:
 		return headerStyle.Render("🧪 Blokilo - " + title)
-	case "Test Results":
+	case headerTestResults:
 		return headerStyle.Render("📊 Blokilo - " + title)
-	case "Summary":
+	case headerSummary:
 		return headerStyle.Render("📋 Blokilo - " + title)
-	case "Settings":
+	case headerSettings:
 		return headerStyle.Render("⚙️ Blokilo - " + title)
 	default:
-		return headerStyle.Render("Blokilo - " + title)
+		return headerStyle.Render(headerDefault + " - " + title)
 	}
 }
 
@@ -68,22 +88,21 @@ func (m AppModel) View() string {
 	case ViewMenu:
 		return m.menu.View()
 	case ViewTest:
-		return formatHeader("Testing") + "\n" + m.progress.View() + "\n\n[Esc/Q to Cancel]"
+		return formatHeader("Testing") + "\n" + m.progress.View() + "\n\n" + testCancelHint
 	case ViewResults:
 		recommendationText := fmt.Sprintf("%.0f%% blocked. %s", m.summary.stats.PercentBlocked, m.summary.recommendation)
 
 		currentDNS := m.settings.GetSelectedDNS()
 		if currentDNS == "" {
 			if m.dnsErr != nil {
-				currentDNS = fmt.Sprintf("System DNS (Error: %v)", m.dnsErr)
+				currentDNS = fmt.Sprintf(systemDNSErrorFmt, m.dnsErr)
 			} else {
 				currentDNS = m.systemDNS
 			}
 		}
-
-		return formatHeader("Test Results") + "\n" + m.resultsTable.View() + "\n\n" + recommendationText + fmt.Sprintf("\n\n🔎 Tested with: %s", currentDNS) + "\n\n[⏎ Enter: Summary, Esc/Q: Menu]"
+		return formatHeader(headerTestResults) + "\n" + m.resultsTable.View() + "\n\n" + recommendationText + fmt.Sprintf(testedWithFmt, currentDNS) + "\n\n" + resultsHint
 	case ViewSummary:
-		return formatHeader("Summary") + "\n" + m.summary.View() + "\n\n[Esc/Q: Menu]"
+		return formatHeader(headerSummary) + "\n" + m.summary.View() + "\n\n" + summaryHint
 	case ViewSettings:
 		return formatHeader("Settings") + "\n" + m.settings.View()
 	default:
@@ -112,13 +131,13 @@ func (m SummaryModel) View() string {
 
 func Recommend(stats models.Stats) string {
 	if stats.PercentBlocked == 100 {
-		return "All ad/tracker domains are blocked. Excellent job!"
+		return msgAllBlocked
 	} else if stats.PercentBlocked > 80 {
-		return "Most ad/tracker domains are blocked. Good job!"
+		return msgMostBlocked
 	} else if stats.PercentBlocked > 0 {
-		return "Partial blocking detected. Consider tightening your filters."
+		return msgPartialBlock
 	}
-	return "No blocking detected. Check your DNS or hosts file setup."
+	return msgNoBlocking
 }
 
 type ResultsTableModel struct {
@@ -395,25 +414,35 @@ func runParallelTests(ctx context.Context, domainList []models.DomainEntry, resu
 		}
 
 		for range numWorkers {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
+			wg.Go(func() {
 				for domainEntry := range jobs {
-					result := dns.TestDomainDNS(ctx, domainEntry.Name, dnsServer)
-					result.Category = domainEntry.Category
-					result.Subcategory = domainEntry.Subcategory
+					dnsResult := dns.TestDomainDNS(ctx, domainEntry.Name, dnsServer)
+					httpResult := httpclient.CheckHTTPConnectivity(ctx, domainEntry.Name, 5*time.Second, 2)
+
+					merged := dnsResult
+					merged.HTTPStatusCode = httpResult.HTTPStatusCode
+					merged.Category = domainEntry.Category
+					merged.Subcategory = domainEntry.Subcategory
+
+					if dnsResult.Err != nil {
+						merged.Err = dnsResult.Err
+					} else if httpResult.Err != nil {
+						merged.Err = httpResult.Err
+					} else {
+						merged.Err = nil
+					}
 
 					select {
 					case <-ctx.Done():
 						return
 					default:
 						select {
-						case resultsCh <- result:
+						case resultsCh <- merged:
 						case <-ctx.Done():
 						}
 					}
 				}
-			}()
+			})
 		}
 
 		go func() {
