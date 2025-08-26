@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/samber/lo"
 )
 
 type Config struct {
@@ -39,10 +41,8 @@ func EnsureDNSPort(addr string) string {
 }
 
 func isValidHostname(hostname string) bool {
-	if len(hostname) == 0 || len(hostname) > 253 {
-		return false
-	}
-	if strings.Contains(hostname, " ") ||
+	if len(hostname) == 0 || len(hostname) > 253 ||
+		strings.Contains(hostname, " ") ||
 		strings.HasPrefix(hostname, "-") ||
 		strings.HasSuffix(hostname, "-") ||
 		strings.Contains(hostname, "..") {
@@ -50,24 +50,24 @@ func isValidHostname(hostname string) bool {
 	}
 
 	labels := strings.Split(hostname, ".")
-	for _, label := range labels {
+	validLabels := lo.EveryBy(labels, func(label string) bool {
 		if len(label) == 0 || len(label) > 63 {
 			return false
 		}
-		if len(label) > 0 {
-			first := label[0]
-			last := label[len(label)-1]
-			if !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || (first >= '0' && first <= '9')) ||
-				!((last >= 'a' && last <= 'z') || (last >= 'A' && last <= 'Z') || (last >= '0' && last <= '9')) {
-				return false
-			}
+		first := label[0]
+		last := label[len(label)-1]
+		if !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || (first >= '0' && first <= '9')) ||
+			!((last >= 'a' && last <= 'z') || (last >= 'A' && last <= 'Z') || (last >= '0' && last <= '9')) {
+			return false
 		}
-		for _, r := range label {
-			if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') ||
-				(r >= '0' && r <= '9') || r == '-') {
-				return false
-			}
-		}
+
+		return lo.EveryBy([]rune(label), func(r rune) bool {
+			return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-'
+		})
+	})
+
+	if !validLabels {
+		return false
 	}
 
 	if strings.Count(hostname, ".") == 0 && strings.Contains(hostname, "-") {

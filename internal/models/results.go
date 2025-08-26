@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 	"time"
+
+	"github.com/samber/lo"
 )
 
 type ResultStatus string
@@ -107,18 +108,13 @@ func LoadCategoryConfig(path string) (*CategoryConfig, error) {
 }
 
 func ComputeStats(results []ClassifiedResult) Stats {
-	var s Stats
-	s.Total = len(results)
-	for _, r := range results {
-		switch r.Status {
-		case StatusBlocked:
-			s.Blocked++
-		case StatusResolved:
-			s.Resolved++
-		case StatusError:
-			s.Errored++
-		}
+	s := Stats{
+		Total:    len(results),
+		Blocked:  lo.CountBy(results, func(r ClassifiedResult) bool { return r.Status == StatusBlocked }),
+		Resolved: lo.CountBy(results, func(r ClassifiedResult) bool { return r.Status == StatusResolved }),
+		Errored:  lo.CountBy(results, func(r ClassifiedResult) bool { return r.Status == StatusError }),
 	}
+
 	if s.Total > 0 {
 		s.PercentBlocked = float64(s.Blocked) / float64(s.Total) * 100
 		s.PercentResolved = float64(s.Resolved) / float64(s.Total) * 100
@@ -127,111 +123,66 @@ func ComputeStats(results []ClassifiedResult) Stats {
 }
 
 func GroupResultsByCategory(results []ClassifiedResult, config *CategoryConfig) []CategoryGroup {
-	categoryOrder := config.CategoryOrder
-	subcategoryOrder := config.SubcategoryOrder
-
-	categoryMap := make(map[string]map[string][]ClassifiedResult)
-
-	for _, result := range results {
-		category := result.Category
-		if category == "" {
-			category = "Uncategorized"
+	categoryMap := lo.GroupBy(results, func(r ClassifiedResult) string {
+		if r.Category == "" {
+			return "Uncategorized"
 		}
-		subcategory := result.Subcategory
-		if subcategory == "" {
-			subcategory = "Other"
-		}
+		return r.Category
+	})
 
-		if categoryMap[category] == nil {
-			categoryMap[category] = make(map[string][]ClassifiedResult)
-		}
-		categoryMap[category][subcategory] = append(categoryMap[category][subcategory], result)
-	}
+	orderedCategories := lo.Filter(config.CategoryOrder, func(cat string, _ int) bool {
+		_, exists := categoryMap[cat]
+		return exists
+	})
 
-	var categories []CategoryGroup
+	uncategorized := lo.FilterMap(lo.Keys(categoryMap), func(cat string, _ int) (string, bool) {
+		return cat, !lo.Contains(config.CategoryOrder, cat)
+	})
 
-	for _, categoryName := range categoryOrder {
-		subcategories, exists := categoryMap[categoryName]
-		if !exists {
-			continue
-		}
+	allCategories := append(orderedCategories, uncategorized...)
 
-		var subcategoryGroups []GroupedResults
-		var allCategoryResults []ClassifiedResult
+	return lo.Map(allCategories, func(categoryName string, _ int) CategoryGroup {
+		subcategories := lo.GroupBy(categoryMap[categoryName], func(r ClassifiedResult) string {
+			if r.Subcategory == "" {
+				return "Other"
+			}
+			return r.Subcategory
+		})
 
-		subOrder, hasOrder := subcategoryOrder[categoryName]
+		subOrder, hasOrder := config.SubcategoryOrder[categoryName]
 		if !hasOrder {
-			subOrder = make([]string, 0, len(subcategories))
-			for subcategoryName := range subcategories {
-				subOrder = append(subOrder, subcategoryName)
-			}
+			subOrder = lo.Keys(subcategories)
 		}
 
-		for _, subcategoryName := range subOrder {
-			subcategoryResults, exists := subcategories[subcategoryName]
-			if !exists {
-				continue
-			}
+		orderedSubcategories := lo.Filter(subOrder, func(subcat string, _ int) bool {
+			_, exists := subcategories[subcat]
+			return exists
+		})
 
-			subcategoryStats := ComputeStats(subcategoryResults)
-			subcategoryGroups = append(subcategoryGroups, GroupedResults{
+		unOrderedSubcategories := lo.FilterMap(lo.Keys(subcategories), func(subcat string, _ int) (string, bool) {
+			return subcat, !lo.Contains(subOrder, subcat)
+		})
+
+		allSubcategories := append(orderedSubcategories, unOrderedSubcategories...)
+
+		subcategoryGroups := lo.Map(allSubcategories, func(subcategoryName string, _ int) GroupedResults {
+			subcategoryResults := subcategories[subcategoryName]
+			return GroupedResults{
 				Category:    categoryName,
 				Subcategory: subcategoryName,
 				Results:     subcategoryResults,
-				Stats:       subcategoryStats,
-			})
-			allCategoryResults = append(allCategoryResults, subcategoryResults...)
-		}
-
-		for subcategoryName, subcategoryResults := range subcategories {
-			found := slices.Contains(subOrder, subcategoryName)
-			if !found {
-				subcategoryStats := ComputeStats(subcategoryResults)
-				subcategoryGroups = append(subcategoryGroups, GroupedResults{
-					Category:    categoryName,
-					Subcategory: subcategoryName,
-					Results:     subcategoryResults,
-					Stats:       subcategoryStats,
-				})
-				allCategoryResults = append(allCategoryResults, subcategoryResults...)
+				Stats:       ComputeStats(subcategoryResults),
 			}
+		})
+
+		allCategoryResults := lo.Flatten(lo.Map(subcategoryGroups, func(g GroupedResults, _ int) []ClassifiedResult {
+			return g.Results
+		}))
+
+		return CategoryGroup{
+			Category:      categoryName,
+			Subcategories: subcategoryGroups,
+			Stats:         ComputeStats(allCategoryResults),
 		}
-
-		if len(subcategoryGroups) > 0 {
-			categoryStats := ComputeStats(allCategoryResults)
-			categories = append(categories, CategoryGroup{
-				Category:      categoryName,
-				Subcategories: subcategoryGroups,
-				Stats:         categoryStats,
-			})
-		}
-	}
-
-	for categoryName, subcategories := range categoryMap {
-		found := slices.Contains(categoryOrder, categoryName)
-		if !found {
-			var subcategoryGroups []GroupedResults
-			var allCategoryResults []ClassifiedResult
-
-			for subcategoryName, subcategoryResults := range subcategories {
-				subcategoryStats := ComputeStats(subcategoryResults)
-				subcategoryGroups = append(subcategoryGroups, GroupedResults{
-					Category:    categoryName,
-					Subcategory: subcategoryName,
-					Results:     subcategoryResults,
-					Stats:       subcategoryStats,
-				})
-				allCategoryResults = append(allCategoryResults, subcategoryResults...)
-			}
-
-			categoryStats := ComputeStats(allCategoryResults)
-			categories = append(categories, CategoryGroup{
-				Category:      categoryName,
-				Subcategories: subcategoryGroups,
-				Stats:         categoryStats,
-			})
-		}
-	}
-
-	return categories
+	})
 }

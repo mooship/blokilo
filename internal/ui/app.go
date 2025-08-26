@@ -12,6 +12,7 @@ import (
 	"github.com/mooship/blokilo/internal/dns"
 	"github.com/mooship/blokilo/internal/httpclient"
 	"github.com/mooship/blokilo/internal/models"
+	"github.com/samber/lo"
 )
 
 var (
@@ -116,10 +117,9 @@ type SummaryModel struct {
 }
 
 func NewSummaryModel(results []models.TestResult) SummaryModel {
-	classified := make([]models.ClassifiedResult, len(results))
-	for i, r := range results {
-		classified[i] = models.ClassifiedResult(r)
-	}
+	classified := lo.Map(results, func(r models.TestResult, _ int) models.ClassifiedResult {
+		return models.ClassifiedResult(r)
+	})
 	stats := models.ComputeStats(classified)
 	rec := Recommend(stats)
 	return SummaryModel{stats: stats, recommendation: rec}
@@ -145,10 +145,9 @@ type ResultsTableModel struct {
 }
 
 func NewResultsTableModel(results []models.TestResult, config *models.CategoryConfig) ResultsTableModel {
-	classified := make([]models.ClassifiedResult, len(results))
-	for i, r := range results {
-		classified[i] = models.ClassifiedResult(r)
-	}
+	classified := lo.Map(results, func(r models.TestResult, _ int) models.ClassifiedResult {
+		return models.ClassifiedResult(r)
+	})
 
 	groups := models.GroupResultsByCategory(classified, config)
 

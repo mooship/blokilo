@@ -1,7 +1,6 @@
 package models
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/samber/lo"
 )
 
 type DomainEntry struct {
@@ -90,7 +91,7 @@ func LoadDomainList(ctx context.Context, path string) ([]DomainEntry, error) {
 	}
 }
 
-func loadFromJSON(f *os.File) ([]DomainEntry, error) {
+func loadFromJSON(f io.Reader) ([]DomainEntry, error) {
 	contentBytes, err := io.ReadAll(f)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
@@ -98,8 +99,6 @@ func loadFromJSON(f *os.File) ([]DomainEntry, error) {
 	content := string(contentBytes)
 
 	jsonContent := StripJSONComments(string(content))
-
-	var entries []DomainEntry
 
 	var groupedData map[string]map[string][]string
 	if err := json.Unmarshal([]byte(jsonContent), &groupedData); err != nil {
@@ -110,65 +109,28 @@ func loadFromJSON(f *os.File) ([]DomainEntry, error) {
 		return flatEntries, nil
 	}
 
-	for category, subcategories := range groupedData {
-		for subcategory, domains := range subcategories {
-			for _, domain := range domains {
-				if strings.TrimSpace(domain) != "" {
-					entries = append(entries, DomainEntry{
-						Name:        strings.TrimSpace(domain),
-						Category:    category,
-						Subcategory: subcategory,
-					})
+	return lo.Flatten(lo.MapToSlice(groupedData, func(category string, subcategories map[string][]string) []DomainEntry {
+		return lo.Flatten(lo.MapToSlice(subcategories, func(subcategory string, domains []string) []DomainEntry {
+			return lo.Map(domains, func(domain string, _ int) DomainEntry {
+				return DomainEntry{
+					Name:        strings.TrimSpace(domain),
+					Category:    category,
+					Subcategory: subcategory,
 				}
-			}
-		}
-	}
-
-	return entries, nil
+			})
+		}))
+	})), nil
 }
 
 func StripJSONComments(content string) string {
 	var result strings.Builder
-	scanner := bufio.NewScanner(strings.NewReader(content))
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		inString := false
-		escaped := false
-		commentStart := -1
-
-		for i, char := range line {
-			if escaped {
-				escaped = false
-				continue
-			}
-
-			if char == '\\' && inString {
-				escaped = true
-				continue
-			}
-
-			if char == '"' {
-				inString = !inString
-				continue
-			}
-
-			if !inString && char == '/' && i+1 < len(line) && line[i+1] == '/' {
-				commentStart = i
-				break
-			}
-		}
-
-		if commentStart >= 0 {
-			line = strings.TrimSpace(line[:commentStart])
-		}
-
-		if line != "" {
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" && !strings.HasPrefix(line, "//") {
 			result.WriteString(line)
 			result.WriteString("\n")
 		}
 	}
-
 	return result.String()
 }

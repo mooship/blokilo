@@ -13,6 +13,7 @@ import (
 
 	"github.com/miekg/dns"
 	"github.com/mooship/blokilo/internal/models"
+	"github.com/samber/lo"
 )
 
 const (
@@ -54,17 +55,20 @@ func getWindowsDNS(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("failed to run ipconfig: %w", err)
 	}
 
-	scanner := bufio.NewScanner(strings.NewReader(string(output)))
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if strings.HasPrefix(line, "DNS Servers") {
-			parts := strings.Split(line, ":")
-			if len(parts) >= 2 {
-				dns := strings.TrimSpace(parts[1])
-				if dns != "" {
-					return dns + ":53", nil
-				}
-			}
+	lines := strings.Split(string(output), "\n")
+	dnsLine, found := lo.Find(lines, func(line string) bool {
+		return strings.HasPrefix(strings.TrimSpace(line), "DNS Servers")
+	})
+
+	if !found {
+		return "", fmt.Errorf("failed to find DNS server in ipconfig output")
+	}
+
+	parts := strings.Split(dnsLine, ":")
+	if len(parts) >= 2 {
+		dns := strings.TrimSpace(parts[1])
+		if dns != "" {
+			return dns + ":53", nil
 		}
 	}
 
@@ -78,17 +82,20 @@ func getMacDNS(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("failed to run scutil: %w", err)
 	}
 
-	scanner := bufio.NewScanner(strings.NewReader(string(output)))
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if strings.HasPrefix(line, "nameserver[") {
-			parts := strings.Split(line, ":")
-			if len(parts) >= 2 {
-				dns := strings.TrimSpace(parts[1])
-				if dns != "" {
-					return dns + ":53", nil
-				}
-			}
+	lines := strings.Split(string(output), "\n")
+	nameserverLine, found := lo.Find(lines, func(line string) bool {
+		return strings.HasPrefix(strings.TrimSpace(line), "nameserver[")
+	})
+
+	if !found {
+		return "", fmt.Errorf("failed to find DNS server in scutil output")
+	}
+
+	parts := strings.Split(nameserverLine, ":")
+	if len(parts) >= 2 {
+		dns := strings.TrimSpace(parts[1])
+		if dns != "" {
+			return dns + ":53", nil
 		}
 	}
 

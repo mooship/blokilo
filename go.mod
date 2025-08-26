@@ -8,6 +8,7 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/miekg/dns v1.1.68
+	github.com/samber/lo v1.51.0
 )
 
 require (
